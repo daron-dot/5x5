@@ -11,7 +11,7 @@
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #fff; color: #1a1a1a; min-height: 100vh; padding-bottom: env(safe-area-inset-bottom); }
-    #app { max-width: 640px; margin: 0 auto; padding: 20px 16px 40px; }
+    #app { max-width: 640px; margin: 0 auto; padding: 20px 16px 60px; }
     .header { margin-bottom: 20px; }
     .header-eyebrow { font-size: 10px; letter-spacing: 2px; color: #aaa; text-transform: uppercase; margin-bottom: 4px; }
     .header-title { font-size: 22px; font-weight: 700; letter-spacing: -0.5px; }
@@ -27,7 +27,7 @@
     .btn-primary.full { width: 100%; }
     .btn-ghost { padding: 6px 10px; border-radius: 6px; background: none; border: none; cursor: pointer; font-size: 13px; color: #888; font-family: inherit; }
     .btn-danger { color: #d45f6b; }
-    .btn-small { padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
+    .btn-small { padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
     .arrow-btn { background: none; border: 1px solid #eee; border-radius: 4px; cursor: pointer; font-size: 10px; color: #bbb; padding: 3px 6px; line-height: 1; }
     .list-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 6px; }
     .progress-box { background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 24px; }
@@ -61,40 +61,42 @@
     .goal-count { font-size: 11px; color: #bbb; margin-left: 4px; }
     .linked-goal { font-size: 11px; color: #bbb; margin-top: 3px; }
     .section-divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
+    .template-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; border: 2px solid #eee; background: #fafafa; cursor: pointer; }
+    .template-card.active-template { border-color: #6B7FD7; background: #EEF0FB; }
+    .archive-item { padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 4px; border-left: 3px solid #ddd; }
   </style>
 </head>
 <body>
 <div id="app"></div>
-
 <script>
 const CATEGORIES = [
-  { id: "spiritual", label: "Spiritual", color: "#6B7FD7", light: "#EEF0FB" },
-  { id: "physical",  label: "Physical",  color: "#4BAF7C", light: "#EBF7F1" },
-  { id: "financial", label: "Financial", color: "#C9873A", light: "#FBF3EA" },
-  { id: "family",    label: "Family",    color: "#D45F6B", light: "#FBECED" },
-  { id: "creative",  label: "Creative",  color: "#8B5DB8", light: "#F3EEF9" },
+  { id:"spiritual", label:"Spiritual", color:"#6B7FD7", light:"#EEF0FB" },
+  { id:"physical",  label:"Physical",  color:"#4BAF7C", light:"#EBF7F1" },
+  { id:"financial", label:"Financial", color:"#C9873A", light:"#FBF3EA" },
+  { id:"family",    label:"Family",    color:"#D45F6B", light:"#FBECED" },
+  { id:"creative",  label:"Creative",  color:"#8B5DB8", light:"#F3EEF9" },
 ];
 
-const DEFAULT_BRICKS = [
-  { id:"b1",  category:"spiritual", label:"Meditation",          start:"05:00", end:"05:30" },
-  { id:"b2",  category:"spiritual", label:"Qigong",              start:"05:30", end:"06:00" },
-  { id:"b3",  category:"spiritual", label:"Morning Pages",       start:"06:00", end:"06:30" },
-  { id:"b4",  category:"spiritual", label:"Reflection",          start:"06:30", end:"07:00" },
-  { id:"b5",  category:"physical",  label:"Gym / Movement",      start:"07:00", end:"07:45" },
-  { id:"b6",  category:"physical",  label:"Smoothie + Recovery", start:"07:45", end:"08:00" },
-  { id:"b7",  category:"financial", label:"COL Client Work",     start:"09:00", end:"09:30" },
-  { id:"b8",  category:"financial", label:"COL Client Work",     start:"09:30", end:"10:00" },
-  { id:"b9",  category:"financial", label:"Ostara",              start:"10:00", end:"10:30" },
-  { id:"b10", category:"financial", label:"Outreach / Pipeline", start:"10:30", end:"11:00" },
-  { id:"b11", category:"family",    label:"Calls / Connection",  start:"11:00", end:"11:30" },
-  { id:"b12", category:"financial", label:"Admin / Finance",     start:"11:30", end:"12:00" },
-  { id:"b13", category:"creative",  label:"Dispatches / Writing",start:"13:00", end:"13:30" },
-  { id:"b14", category:"creative",  label:"Opt Out / Music",     start:"13:30", end:"14:00" },
-  { id:"b15", category:"creative",  label:"Deep Work",           start:"14:00", end:"14:30" },
-  { id:"b16", category:"creative",  label:"Deep Work",           start:"14:30", end:"15:00" },
-  { id:"b17", category:"family",    label:"Family Time",         start:"16:00", end:"17:00" },
-  { id:"b18", category:"spiritual", label:"Evening Wind Down",   start:"19:00", end:"19:30" },
-  { id:"b19", category:"spiritual", label:"Lists / Tomorrow Prep",start:"19:30",end:"20:00" },
+const DEFAULT_TEMPLATE_BRICKS = [
+  { id:"b1",  category:"spiritual", label:"Meditation",           start:"05:00", end:"05:30" },
+  { id:"b2",  category:"spiritual", label:"Qigong",               start:"05:30", end:"06:00" },
+  { id:"b3",  category:"spiritual", label:"Morning Pages",        start:"06:00", end:"06:30" },
+  { id:"b4",  category:"spiritual", label:"Reflection",           start:"06:30", end:"07:00" },
+  { id:"b5",  category:"physical",  label:"Gym / Movement",       start:"07:00", end:"07:45" },
+  { id:"b6",  category:"physical",  label:"Smoothie + Recovery",  start:"07:45", end:"08:00" },
+  { id:"b7",  category:"financial", label:"COL Client Work",      start:"09:00", end:"09:30" },
+  { id:"b8",  category:"financial", label:"COL Client Work",      start:"09:30", end:"10:00" },
+  { id:"b9",  category:"financial", label:"Ostara",               start:"10:00", end:"10:30" },
+  { id:"b10", category:"financial", label:"Outreach / Pipeline",  start:"10:30", end:"11:00" },
+  { id:"b11", category:"family",    label:"Calls / Connection",   start:"11:00", end:"11:30" },
+  { id:"b12", category:"financial", label:"Admin / Finance",      start:"11:30", end:"12:00" },
+  { id:"b13", category:"creative",  label:"Dispatches / Writing", start:"13:00", end:"13:30" },
+  { id:"b14", category:"creative",  label:"Opt Out / Music",      start:"13:30", end:"14:00" },
+  { id:"b15", category:"creative",  label:"Deep Work",            start:"14:00", end:"14:30" },
+  { id:"b16", category:"creative",  label:"Deep Work",            start:"14:30", end:"15:00" },
+  { id:"b17", category:"family",    label:"Family Time",          start:"16:00", end:"17:00" },
+  { id:"b18", category:"spiritual", label:"Evening Wind Down",    start:"19:00", end:"19:30" },
+  { id:"b19", category:"spiritual", label:"Lists / Tomorrow Prep",start:"19:30", end:"20:00" },
 ];
 
 const DEFAULT_INTENTIONS = [
@@ -105,27 +107,36 @@ const DEFAULT_INTENTIONS = [
 
 const TABS = ["Bricks","Intentions","Goals","Milestones","Lists","Check-In"];
 
-const cat = id => CATEGORIES.find(c => c.id === id) || CATEGORIES[0];
+const cat = id => CATEGORIES.find(c=>c.id===id)||CATEGORIES[0];
 const todayStr = () => new Date().toISOString().split("T")[0];
-const isSaturday = () => new Date().getDay() === 6;
+const isSaturday = () => new Date().getDay()===6;
 const currentMonth = () => new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"});
 const uid = () => Math.random().toString(36).substr(2,9);
+const deepCopy = obj => JSON.parse(JSON.stringify(obj));
 
-// ---- STATE ----
 let state = {
   activeTab: "Bricks",
-  bricks: DEFAULT_BRICKS,
+  // Templates
+  templates: [{ id:"t1", name:"Standard Day", bricks: deepCopy(DEFAULT_TEMPLATE_BRICKS) }],
+  activeTemplateId: "t1",
+  todayBricks: deepCopy(DEFAULT_TEMPLATE_BRICKS),
+  // Content
   intentions: DEFAULT_INTENTIONS,
   goals: [],
   milestones: [],
   lists: [],
+  listArchive: {},
   listView: "category",
   checkins: {},
   todayCompleted: [],
   todayNote: "",
   weeklyWins: "", weeklyChallenges: "", weeklyAdjustments: "",
+  // UI
   showAddBrick: false,
   editingBrickId: null,
+  showAddTemplate: false,
+  editingTemplateId: null,
+  newTemplateName: "",
   newBrick: { category:"spiritual", label:"", start:"09:00", end:"09:30" },
   newIntention: "",
   newGoal: { text:"", category:"spiritual" },
@@ -135,15 +146,15 @@ let state = {
 
 function loadState() {
   try {
-    const keys = ["bricks","intentions","goals","milestones","lists","checkins"];
+    const keys = ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins"];
     keys.forEach(k => {
       const v = localStorage.getItem("5x5_"+k);
       if (v) state[k] = JSON.parse(v);
     });
     const td = state.checkins[todayStr()];
-    if (td) { state.todayCompleted = td.completed || []; state.todayNote = td.note || ""; }
+    if (td) { state.todayCompleted = td.completed||[]; state.todayNote = td.note||""; }
     const wr = state.checkins["weekly_"+todayStr()];
-    if (wr) { state.weeklyWins = wr.wins||""; state.weeklyChallenges = wr.challenges||""; state.weeklyAdjustments = wr.adjustments||""; }
+    if (wr) { state.weeklyWins=wr.wins||""; state.weeklyChallenges=wr.challenges||""; state.weeklyAdjustments=wr.adjustments||""; }
   } catch(e) {}
 }
 
@@ -157,11 +168,22 @@ function saveCheckin() {
 }
 
 function saveWeekly() {
-  state.checkins["weekly_"+todayStr()] = { wins: state.weeklyWins, challenges: state.weeklyChallenges, adjustments: state.weeklyAdjustments };
+  state.checkins["weekly_"+todayStr()] = { wins:state.weeklyWins, challenges:state.weeklyChallenges, adjustments:state.weeklyAdjustments };
   persist("checkins");
 }
 
-// ---- RENDER ----
+function archiveCompletedLists() {
+  const completed = state.lists.filter(l=>l.done);
+  if (!completed.length) { alert("No completed tasks to archive."); return; }
+  const dateKey = todayStr();
+  if (!state.listArchive[dateKey]) state.listArchive[dateKey] = [];
+  state.listArchive[dateKey].push(...completed);
+  state.lists = state.lists.filter(l=>!l.done);
+  persist("lists");
+  persist("listArchive");
+  render();
+}
+
 function render() {
   document.getElementById("app").innerHTML = `
     <div class="header">
@@ -171,40 +193,62 @@ function render() {
     <div class="tabs">${TABS.map(t=>`<button class="tab-btn${state.activeTab===t?" active":""}" onclick="setTab('${t}')">${t}</button>`).join("")}</div>
     <div id="content"></div>
     ${state.showAddBrick ? renderAddBrickModal() : ""}
+    ${state.showAddTemplate ? renderAddTemplateModal() : ""}
   `;
   const content = document.getElementById("content");
-  if (state.activeTab === "Bricks") content.innerHTML = renderBricks();
-  else if (state.activeTab === "Intentions") content.innerHTML = renderIntentions();
-  else if (state.activeTab === "Goals") content.innerHTML = renderGoals();
-  else if (state.activeTab === "Milestones") content.innerHTML = renderMilestones();
-  else if (state.activeTab === "Lists") content.innerHTML = renderLists();
-  else if (state.activeTab === "Check-In") content.innerHTML = renderCheckin();
+  if (state.activeTab==="Bricks") content.innerHTML = renderBricks();
+  else if (state.activeTab==="Intentions") content.innerHTML = renderIntentions();
+  else if (state.activeTab==="Goals") content.innerHTML = renderGoals();
+  else if (state.activeTab==="Milestones") content.innerHTML = renderMilestones();
+  else if (state.activeTab==="Lists") content.innerHTML = renderLists();
+  else if (state.activeTab==="Check-In") content.innerHTML = renderCheckin();
 }
 
-function setTab(t) { state.activeTab = t; render(); }
+function setTab(t) { state.activeTab=t; render(); }
 
-// BRICKS
+// ---- BRICKS ----
 function renderBricks() {
-  const sorted = [...state.bricks].sort((a,b)=>a.start.localeCompare(b.start));
+  const activeTemplate = state.templates.find(t=>t.id===state.activeTemplateId);
+  const sorted = [...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
+
+  const templateSelector = `
+    <div style="margin-bottom:20px">
+      <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Today's Template</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+        ${state.templates.map(t=>`
+          <button onclick="loadTemplate('${t.id}')" style="padding:8px 14px;border-radius:20px;border:2px solid ${state.activeTemplateId===t.id?"#6B7FD7":"#eee"};background:${state.activeTemplateId===t.id?"#EEF0FB":"#fafafa"};color:${state.activeTemplateId===t.id?"#6B7FD7":"#666"};font-size:13px;font-weight:${state.activeTemplateId===t.id?700:400};cursor:pointer;font-family:inherit">${t.name}</button>
+        `).join("")}
+        <button onclick="state.showAddTemplate=true;render()" style="padding:8px 14px;border-radius:20px;border:2px dashed #ddd;background:none;color:#aaa;font-size:13px;cursor:pointer;font-family:inherit">+ New</button>
+      </div>
+      ${activeTemplate ? `<div style="display:flex;gap:8px">
+        <button onclick="editTemplate('${activeTemplate.id}')" class="btn-ghost" style="font-size:12px">Edit template</button>
+        ${state.templates.length>1?`<button onclick="deleteTemplate('${activeTemplate.id}')" class="btn-ghost btn-danger" style="font-size:12px">Delete</button>`:""}
+      </div>`:""}
+    </div>`;
+
   const legend = CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:5px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
+
   const rows = sorted.map((brick,idx)=>{
     const c = cat(brick.category);
-    if (state.editingBrickId === brick.id) {
+    if (state.editingBrickId===brick.id) {
       return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <div style="display:flex;flex-direction:column;gap:2px">
           <button class="arrow-btn" onclick="moveBrick('${brick.id}',-1)">▲</button>
           <button class="arrow-btn" onclick="moveBrick('${brick.id}',1)">▼</button>
         </div>
         <div class="brick-card" style="background:${c.light};border-left-color:${c.color};flex-direction:column;align-items:stretch;gap:8px">
-          <input value="${brick.label}" oninput="updateBrickField('${brick.id}','label',this.value)" placeholder="Label" />
+          <input value="${brick.label}" onchange="updateBrickField('${brick.id}','label',this.value)" />
           <div class="flex-row">
-            <input type="time" value="${brick.start}" oninput="updateBrickField('${brick.id}','start',this.value)" />
-            <input type="time" value="${brick.end}" oninput="updateBrickField('${brick.id}','end',this.value)" />
+            <input type="time" value="${brick.start}" onchange="updateBrickField('${brick.id}','start',this.value)" />
+            <input type="time" value="${brick.end}" onchange="updateBrickField('${brick.id}','end',this.value)" />
           </div>
           <select onchange="updateBrickField('${brick.id}','category',this.value)">
             ${CATEGORIES.map(c=>`<option value="${c.id}"${brick.category===c.id?" selected":""}>${c.label}</option>`).join("")}
           </select>
-          <button class="btn-primary btn-small" style="background:${c.color}" onclick="state.editingBrickId=null;render()">Done</button>
+          <div class="flex-row">
+            <button class="btn-primary btn-small" style="background:${c.color}" onclick="state.editingBrickId=null;persist('todayBricks');render()">Done</button>
+            <button class="btn-ghost" onclick="saveBrickToTemplate('${brick.id}')" style="font-size:12px">Save to template</button>
+          </div>
         </div>
       </div>`;
     }
@@ -217,41 +261,121 @@ function renderBricks() {
         <div><div class="brick-label">${brick.label}</div><div class="brick-time">${brick.start} – ${brick.end}</div></div>
         <div class="flex-row">
           <button class="btn-ghost" onclick="state.editingBrickId='${brick.id}';render()">Edit</button>
-          <button class="btn-ghost btn-danger" onclick="deleteBrick('${brick.id}')">✕</button>
+          <button class="btn-ghost btn-danger" onclick="deleteTodayBrick('${brick.id}')">✕</button>
         </div>
       </div>
     </div>`;
   }).join("");
+
   return `
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+    ${templateSelector}
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <span style="color:#888;font-size:13px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</span>
-      <button class="btn-primary btn-small" onclick="state.showAddBrick=true;render()">+ Add Brick</button>
+      <button class="btn-primary btn-small" style="background:#1a1a1a" onclick="state.showAddBrick=true;render()">+ Add Brick</button>
     </div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px">${legend}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">${legend}</div>
     ${rows}`;
 }
 
+function loadTemplate(id) {
+  const t = state.templates.find(t=>t.id===id);
+  if (!t) return;
+  state.activeTemplateId = id;
+  state.todayBricks = deepCopy(t.bricks);
+  persist("activeTemplateId");
+  persist("todayBricks");
+  render();
+}
+
 function moveBrick(id, dir) {
-  const sorted = [...state.bricks].sort((a,b)=>a.start.localeCompare(b.start));
+  const sorted = [...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
   const idx = sorted.findIndex(b=>b.id===id);
-  const target = idx + dir;
-  if (target < 0 || target >= sorted.length) return;
-  const t1 = sorted[idx].start, e1 = sorted[idx].end;
-  sorted[idx] = {...sorted[idx], start: sorted[target].start, end: sorted[target].end};
-  sorted[target] = {...sorted[target], start: t1, end: e1};
-  state.bricks = sorted;
-  persist("bricks");
+  const target = idx+dir;
+  if (target<0||target>=sorted.length) return;
+  const t1=sorted[idx].start, e1=sorted[idx].end;
+  sorted[idx]={...sorted[idx],start:sorted[target].start,end:sorted[target].end};
+  sorted[target]={...sorted[target],start:t1,end:e1};
+  state.todayBricks = sorted;
+  persist("todayBricks");
   render();
 }
 
 function updateBrickField(id, field, val) {
-  state.bricks = state.bricks.map(b => b.id===id ? {...b,[field]:val} : b);
-  persist("bricks");
+  state.todayBricks = state.todayBricks.map(b=>b.id===id?{...b,[field]:val}:b);
+  persist("todayBricks");
 }
 
-function deleteBrick(id) {
-  state.bricks = state.bricks.filter(b=>b.id!==id);
-  persist("bricks");
+function deleteTodayBrick(id) {
+  state.todayBricks = state.todayBricks.filter(b=>b.id!==id);
+  persist("todayBricks");
+  render();
+}
+
+function saveBrickToTemplate(brickId) {
+  const brick = state.todayBricks.find(b=>b.id===brickId);
+  if (!brick) return;
+  state.templates = state.templates.map(t=>{
+    if (t.id!==state.activeTemplateId) return t;
+    const exists = t.bricks.find(b=>b.id===brickId);
+    const newBricks = exists ? t.bricks.map(b=>b.id===brickId?{...brick}:b) : [...t.bricks, {...brick}];
+    return {...t, bricks: newBricks};
+  });
+  persist("templates");
+  state.editingBrickId = null;
+  render();
+}
+
+function editTemplate(id) {
+  state.editingTemplateId = id;
+  const t = state.templates.find(t=>t.id===id);
+  state.newTemplateName = t ? t.name : "";
+  state.showAddTemplate = true;
+  render();
+}
+
+function deleteTemplate(id) {
+  if (state.templates.length<=1) return;
+  state.templates = state.templates.filter(t=>t.id!==id);
+  state.activeTemplateId = state.templates[0].id;
+  state.todayBricks = deepCopy(state.templates[0].bricks);
+  persist("templates");
+  persist("activeTemplateId");
+  persist("todayBricks");
+  render();
+}
+
+function renderAddTemplateModal() {
+  const isEdit = !!state.editingTemplateId;
+  return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddTemplate=false;state.editingTemplateId=null;render()}">
+    <div class="modal-box">
+      <div class="modal-title">${isEdit?"Edit Template":"New Template"}</div>
+      <div class="flex-col">
+        <input placeholder="Template name (e.g. MWF, Travel Day)" id="tname" value="${state.newTemplateName}" oninput="state.newTemplateName=this.value" />
+        <div class="sub-text" style="margin:0">${isEdit?"Rename this template.":"This will copy today's current bricks as the starting point. You can edit bricks in the Bricks tab after loading this template."}</div>
+        <div class="flex-row">
+          <button class="btn-primary" onclick="saveTemplate()">${isEdit?"Save":"Create"}</button>
+          <button class="btn-ghost" onclick="state.showAddTemplate=false;state.editingTemplateId=null;render()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveTemplate() {
+  const name = state.newTemplateName.trim();
+  if (!name) return;
+  if (state.editingTemplateId) {
+    state.templates = state.templates.map(t=>t.id===state.editingTemplateId?{...t,name}:t);
+  } else {
+    const newT = { id:uid(), name, bricks: deepCopy(state.todayBricks) };
+    state.templates.push(newT);
+    state.activeTemplateId = newT.id;
+  }
+  state.newTemplateName = "";
+  state.editingTemplateId = null;
+  state.showAddTemplate = false;
+  persist("templates");
+  persist("activeTemplateId");
   render();
 }
 
@@ -261,13 +385,13 @@ function renderAddBrickModal() {
     <div class="modal-box">
       <div class="modal-title">New Brick</div>
       <div class="flex-col">
-        <input placeholder="Label" value="${nb.label}" oninput="state.newBrick.label=this.value" />
+        <input placeholder="Label" id="nb-label" value="${nb.label}" oninput="state.newBrick.label=this.value" />
         <select onchange="state.newBrick.category=this.value">
           ${CATEGORIES.map(c=>`<option value="${c.id}"${nb.category===c.id?" selected":""}>${c.label}</option>`).join("")}
         </select>
         <div class="flex-row">
-          <input type="time" value="${nb.start}" oninput="state.newBrick.start=this.value" />
-          <input type="time" value="${nb.end}" oninput="state.newBrick.end=this.value" />
+          <input type="time" value="${nb.start}" onchange="state.newBrick.start=this.value" />
+          <input type="time" value="${nb.end}" onchange="state.newBrick.end=this.value" />
         </div>
         <div class="flex-row">
           <button class="btn-primary" onclick="addBrick()">Add</button>
@@ -279,15 +403,17 @@ function renderAddBrickModal() {
 }
 
 function addBrick() {
-  if (!state.newBrick.label.trim()) return;
-  state.bricks.push({...state.newBrick, id: uid()});
+  const label = document.getElementById("nb-label")?.value || state.newBrick.label;
+  if (!label.trim()) return;
+  const brick = {...state.newBrick, label:label.trim(), id:uid()};
+  state.todayBricks.push(brick);
   state.newBrick = { category:"spiritual", label:"", start:"09:00", end:"09:30" };
   state.showAddBrick = false;
-  persist("bricks");
+  persist("todayBricks");
   render();
 }
 
-// INTENTIONS
+// ---- INTENTIONS ----
 function renderIntentions() {
   const rows = state.intentions.map(i=>`
     <div class="list-row">
@@ -297,29 +423,26 @@ function renderIntentions() {
   return `
     <div class="section-head">Intentions</div>
     <div class="sub-text">What you feel called to bring into form. No timeline. From the heart.</div>
-    ${rows || '<div class="empty-msg">No intentions yet.</div>'}
-    <div class="flex-row" style="margin-top:12px">
-      <input placeholder="Add an intention..." id="new-intention" value="${state.newIntention}" oninput="state.newIntention=this.value" style="flex:1" />
-      <button class="btn-primary btn-small" onclick="addIntention()">Add</button>
+    ${rows||'<div class="empty-msg">No intentions yet.</div>'}
+    <div style="margin-top:12px">
+      <textarea id="new-intention" rows="2" placeholder="Add an intention..." onchange="state.newIntention=this.value">${state.newIntention}</textarea>
+      <button class="btn-primary btn-small" style="margin-top:8px" onclick="addIntention()">Add</button>
     </div>`;
 }
 
 function addIntention() {
-  const t = state.newIntention.trim();
+  const el = document.getElementById("new-intention");
+  const t = (el?el.value:state.newIntention).trim();
   if (!t) return;
-  state.intentions.push({id:uid(), text:t});
-  state.newIntention = "";
+  state.intentions.push({id:uid(),text:t});
+  state.newIntention="";
   persist("intentions");
   render();
 }
 
-function deleteIntention(id) {
-  state.intentions = state.intentions.filter(i=>i.id!==id);
-  persist("intentions");
-  render();
-}
+function deleteIntention(id) { state.intentions=state.intentions.filter(i=>i.id!==id); persist("intentions"); render(); }
 
-// GOALS
+// ---- GOALS ----
 function renderGoals() {
   const sections = CATEGORIES.map(c=>{
     const cg = state.goals.filter(g=>g.category===c.id);
@@ -328,22 +451,22 @@ function renderGoals() {
       const done = ms.filter(m=>m.done).length;
       return `<div class="list-row" style="margin-left:16px;margin-bottom:6px">
         <span style="flex:1;font-size:14px;color:#333">${g.text}</span>
-        ${ms.length>0?`<span class="goal-count">${done}/${ms.length}</span>`:""}
+        ${ms.length?`<span class="goal-count">${done}/${ms.length}</span>`:""}
         <button class="btn-ghost btn-danger" onclick="deleteGoal('${g.id}')">✕</button>
       </div>`;
     }).join("");
     return `<div style="margin-bottom:18px">
       <div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>
-      ${rows || `<div class="empty-msg">No goals yet.</div>`}
+      ${rows||`<div class="empty-msg">No goals yet.</div>`}
     </div>`;
   }).join("");
   return `
     <div class="section-head">Goals</div>
     <div class="sub-text">No timeline. Add milestones in the Milestones tab.</div>
     ${sections}
-    <hr class="section-divider" />
+    <hr class="section-divider"/>
     <div class="flex-col">
-      <input placeholder="New goal..." id="new-goal-text" value="${state.newGoal.text}" oninput="state.newGoal.text=this.value" />
+      <textarea id="new-goal-text" rows="2" placeholder="New goal..." onchange="state.newGoal.text=this.value">${state.newGoal.text}</textarea>
       <select onchange="state.newGoal.category=this.value">
         ${CATEGORIES.map(c=>`<option value="${c.id}"${state.newGoal.category===c.id?" selected":""}>${c.label}</option>`).join("")}
       </select>
@@ -352,36 +475,32 @@ function renderGoals() {
 }
 
 function addGoal() {
-  if (!state.newGoal.text.trim()) return;
-  state.goals.push({id:uid(), text:state.newGoal.text.trim(), category:state.newGoal.category});
-  state.newGoal = {text:"", category:"spiritual"};
+  const el = document.getElementById("new-goal-text");
+  const t = (el?el.value:state.newGoal.text).trim();
+  if (!t) return;
+  state.goals.push({id:uid(),text:t,category:state.newGoal.category});
+  state.newGoal={text:"",category:"spiritual"};
   persist("goals");
   render();
 }
 
-function deleteGoal(id) {
-  state.goals = state.goals.filter(g=>g.id!==id);
-  persist("goals");
-  render();
-}
+function deleteGoal(id) { state.goals=state.goals.filter(g=>g.id!==id); persist("goals"); render(); }
 
-// MILESTONES
+// ---- MILESTONES ----
 function renderMilestones() {
-  const total = state.milestones.length;
-  const done = state.milestones.filter(m=>m.done).length;
-  const pct = total>0?Math.round((done/total)*100):0;
-  const circles = CATEGORIES.map(c=>{
-    const cm = state.milestones.filter(m=>m.category===c.id);
-    if (!cm.length) return "";
-    const cd = cm.filter(m=>m.done).length;
-    return `<div class="cat-circle" style="background:${c.light};border-color:${c.color};color:${c.color}" title="${c.label}">${cd}/${cm.length}</div>`;
+  const total=state.milestones.length, done=state.milestones.filter(m=>m.done).length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  const circles=CATEGORIES.map(c=>{
+    const cm=state.milestones.filter(m=>m.category===c.id);
+    if(!cm.length) return "";
+    const cd=cm.filter(m=>m.done).length;
+    return `<div class="cat-circle" style="background:${c.light};border-color:${c.color};color:${c.color}">${cd}/${cm.length}</div>`;
   }).join("");
-
-  const sections = CATEGORIES.map(c=>{
-    const cm = state.milestones.filter(m=>m.category===c.id);
-    const cdone = cm.filter(m=>m.done).length;
-    const rows = cm.map(m=>{
-      const g = state.goals.find(g=>g.id===m.goalId);
+  const sections=CATEGORIES.map(c=>{
+    const cm=state.milestones.filter(m=>m.category===c.id);
+    const cdone=cm.filter(m=>m.done).length;
+    const rows=cm.map(m=>{
+      const g=state.goals.find(g=>g.id===m.goalId);
       return `<div class="milestone-card" style="background:${m.done?c.light:"#fafafa"};border-color:${m.done?c.color:"#eee"}">
         <button class="check-circle" style="background:${m.done?c.color:"#ddd"}" onclick="toggleMilestone('${m.id}')">${m.done?"✓":""}</button>
         <div style="flex:1">
@@ -393,13 +512,11 @@ function renderMilestones() {
     }).join("");
     return `<div style="margin-bottom:22px">
       <div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span><span class="goal-count">${cdone}/${cm.length}</span></div>
-      ${rows || `<div class="empty-msg">No milestones this month.</div>`}
+      ${rows||`<div class="empty-msg">No milestones this month.</div>`}
     </div>`;
   }).join("");
-
-  const goalOptions = state.goals.filter(g=>g.category===state.newMilestone.category)
+  const goalOptions=state.goals.filter(g=>g.category===state.newMilestone.category)
     .map(g=>`<option value="${g.id}"${state.newMilestone.goalId===g.id?" selected":""}>${g.text}</option>`).join("");
-
   return `
     <div class="progress-box">
       <div style="font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${currentMonth()}</div>
@@ -410,10 +527,10 @@ function renderMilestones() {
       <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
     </div>
     ${sections}
-    <hr class="section-divider" />
+    <hr class="section-divider"/>
     <div class="section-head">Add Milestone</div>
     <div class="flex-col">
-      <input placeholder="This month I will..." value="${state.newMilestone.text}" oninput="state.newMilestone.text=this.value" />
+      <textarea id="new-ms-text" rows="2" placeholder="This month I will..." onchange="state.newMilestone.text=this.value">${state.newMilestone.text}</textarea>
       <select onchange="state.newMilestone.category=this.value;state.newMilestone.goalId='';render()">
         ${CATEGORIES.map(c=>`<option value="${c.id}"${state.newMilestone.category===c.id?" selected":""}>${c.label}</option>`).join("")}
       </select>
@@ -425,34 +542,27 @@ function renderMilestones() {
     </div>`;
 }
 
-function toggleMilestone(id) {
-  state.milestones = state.milestones.map(m=>m.id===id?{...m,done:!m.done}:m);
-  persist("milestones");
-  render();
-}
-
-function deleteMilestone(id) {
-  state.milestones = state.milestones.filter(m=>m.id!==id);
-  persist("milestones");
-  render();
-}
-
+function toggleMilestone(id) { state.milestones=state.milestones.map(m=>m.id===id?{...m,done:!m.done}:m); persist("milestones"); render(); }
+function deleteMilestone(id) { state.milestones=state.milestones.filter(m=>m.id!==id); persist("milestones"); render(); }
 function addMilestone() {
-  if (!state.newMilestone.text.trim()) return;
-  state.milestones.push({id:uid(), text:state.newMilestone.text.trim(), category:state.newMilestone.category, goalId:state.newMilestone.goalId, done:false, month:currentMonth()});
-  state.newMilestone = {text:"", category:"spiritual", goalId:""};
+  const el=document.getElementById("new-ms-text");
+  const t=(el?el.value:state.newMilestone.text).trim();
+  if(!t) return;
+  state.milestones.push({id:uid(),text:t,category:state.newMilestone.category,goalId:state.newMilestone.goalId,done:false,month:currentMonth()});
+  state.newMilestone={text:"",category:"spiritual",goalId:""};
   persist("milestones");
   render();
 }
 
-// LISTS
+// ---- LISTS ----
 function renderLists() {
-  const projects = [...new Set(state.lists.map(l=>l.project).filter(Boolean))];
-  let body = "";
-  if (state.listView === "category") {
-    body = CATEGORIES.map(c=>{
-      const items = state.lists.filter(l=>l.category===c.id);
-      const rows = items.map(item=>`
+  const projects=[...new Set(state.lists.map(l=>l.project).filter(Boolean))];
+  const completedCount = state.lists.filter(l=>l.done).length;
+  let body="";
+  if(state.listView==="category"){
+    body=CATEGORIES.map(c=>{
+      const items=state.lists.filter(l=>l.category===c.id);
+      const rows=items.map(item=>`
         <div class="list-row" style="margin-left:16px">
           <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
           <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
@@ -461,14 +571,14 @@ function renderLists() {
         </div>`).join("");
       return `<div style="margin-bottom:18px">
         <div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>
-        ${rows || `<div class="empty-msg">Nothing here yet.</div>`}
+        ${rows||`<div class="empty-msg">Nothing here yet.</div>`}
       </div>`;
     }).join("");
   } else {
-    const projSections = projects.map(proj=>{
-      const items = state.lists.filter(l=>l.project===proj);
-      const rows = items.map(item=>{
-        const c = cat(item.category);
+    const projSections=projects.map(proj=>{
+      const items=state.lists.filter(l=>l.project===proj);
+      const rows=items.map(item=>{
+        const c=cat(item.category);
         return `<div class="list-row" style="border-left:3px solid ${c.color};padding-left:10px">
           <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
           <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
@@ -477,16 +587,30 @@ function renderLists() {
       }).join("");
       return `<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#444;margin-bottom:8px">${proj}</div>${rows}</div>`;
     }).join("");
-    const untagged = state.lists.filter(l=>!l.project);
-    const untaggedRows = untagged.map(item=>`
+    const untagged=state.lists.filter(l=>!l.project);
+    const untaggedRows=untagged.map(item=>`
       <div class="list-row">
         <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
         <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
         <button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button>
       </div>`).join("");
-    body = projSections + (untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${untaggedRows}</div>`:"");
-    if (!body.trim()) body = `<div class="empty-msg" style="margin-bottom:20px">No tasks yet.</div>`;
+    body=projSections+(untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${untaggedRows}</div>`:"");
+    if(!body.trim()) body=`<div class="empty-msg" style="margin-bottom:20px">No tasks yet.</div>`;
   }
+
+  // Archive section
+  const archiveDates = Object.keys(state.listArchive).sort().reverse().slice(0,5);
+  const archiveSection = archiveDates.length ? `
+    <hr class="section-divider"/>
+    <div class="section-head">Archive</div>
+    <div class="sub-text">Completed tasks from previous days.</div>
+    ${archiveDates.map(d=>{
+      const items=state.listArchive[d];
+      return `<div style="margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>
+        ${items.map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}
+      </div>`;
+    }).join("")}` : "";
 
   return `
     <div class="flex-row" style="margin-bottom:20px">
@@ -494,69 +618,60 @@ function renderLists() {
       <button class="pill-toggle" style="background:${state.listView==="project"?"#222":"#eee"};color:${state.listView==="project"?"#fff":"#555"}" onclick="state.listView='project';render()">By Project</button>
     </div>
     ${body}
-    <hr class="section-divider" />
+    ${completedCount>0?`<button class="btn-primary full" style="background:#4BAF7C;margin-bottom:24px" onclick="archiveCompletedLists()">Archive ${completedCount} completed task${completedCount!==1?"s":""}</button>`:""}
+    <hr class="section-divider"/>
     <div class="section-head">Add to List</div>
     <div class="flex-col">
-      <input placeholder="Task or note..." value="${state.newItem.text}" oninput="state.newItem.text=this.value" />
+      <textarea id="new-item-text" rows="2" placeholder="Task or note..." onchange="state.newItem.text=this.value">${state.newItem.text}</textarea>
       <select onchange="state.newItem.category=this.value">
         ${CATEGORIES.map(c=>`<option value="${c.id}"${state.newItem.category===c.id?" selected":""}>${c.label}</option>`).join("")}
       </select>
-      <input placeholder="Project (optional)" value="${state.newItem.project}" oninput="state.newItem.project=this.value" />
+      <input id="new-item-project" placeholder="Project (optional)" value="${state.newItem.project}" onchange="state.newItem.project=this.value" />
       <button class="btn-primary" onclick="addList()">Add to List</button>
-    </div>`;
+    </div>
+    ${archiveSection}`;
 }
 
-function toggleList(id) {
-  state.lists = state.lists.map(l=>l.id===id?{...l,done:!l.done}:l);
-  persist("lists");
-  render();
-}
-
-function deleteList(id) {
-  state.lists = state.lists.filter(l=>l.id!==id);
-  persist("lists");
-  render();
-}
-
+function toggleList(id) { state.lists=state.lists.map(l=>l.id===id?{...l,done:!l.done}:l); persist("lists"); render(); }
+function deleteList(id) { state.lists=state.lists.filter(l=>l.id!==id); persist("lists"); render(); }
 function addList() {
-  if (!state.newItem.text.trim()) return;
-  state.lists.push({id:uid(), text:state.newItem.text.trim(), category:state.newItem.category, project:state.newItem.project, done:false, date:todayStr()});
-  state.newItem = {text:"", category:"spiritual", project:""};
+  const el=document.getElementById("new-item-text");
+  const elp=document.getElementById("new-item-project");
+  const t=(el?el.value:state.newItem.text).trim();
+  const p=(elp?elp.value:state.newItem.project).trim();
+  if(!t) return;
+  state.lists.push({id:uid(),text:t,category:state.newItem.category,project:p,done:false,date:todayStr()});
+  state.newItem={text:"",category:"spiritual",project:""};
   persist("lists");
   render();
 }
 
-// CHECK-IN
+// ---- CHECK-IN ----
 function renderCheckin() {
-  const sorted = [...state.bricks].sort((a,b)=>a.start.localeCompare(b.start));
-  const total = sorted.length;
-  const done = state.todayCompleted.length;
-  const pct = total>0?Math.round((done/total)*100):0;
-
-  const brickRows = sorted.map(brick=>{
-    const c = cat(brick.category);
-    const isDone = state.todayCompleted.includes(brick.id);
+  const sorted=[...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
+  const total=sorted.length, done=state.todayCompleted.length;
+  const pct=total>0?Math.round((done/total)*100):0;
+  const brickRows=sorted.map(brick=>{
+    const c=cat(brick.category);
+    const isDone=state.todayCompleted.includes(brick.id);
     return `<div class="checkin-brick" style="background:${isDone?c.light:"#fafafa"};border-color:${isDone?c.color:"#eee"}" onclick="toggleCheckin('${brick.id}')">
       <div class="checkin-box" style="background:${isDone?c.color:"#ddd"}">${isDone?"✓":""}</div>
       <span style="font-size:13px;color:${isDone?"#222":"#888"};font-weight:${isDone?600:400};flex:1">${brick.label}</span>
       <span style="font-size:11px;color:#bbb">${brick.start}</span>
     </div>`;
   }).join("");
-
-  const saturday = isSaturday();
-  const weeklySection = saturday ? `
-    <hr class="divider" />
+  const saturday=isSaturday();
+  const weeklySection=saturday?`
+    <hr class="divider"/>
     <div class="section-head">Saturday Weekly Review</div>
     <div class="sub-text">Review the week. Adjust the bricks. Sunday is rest.</div>
     <label>Wins this week</label>
-    <textarea rows="3" oninput="state.weeklyWins=this.value" placeholder="What worked? What moved?">${state.weeklyWins}</textarea>
+    <textarea rows="3" onchange="state.weeklyWins=this.value" placeholder="What worked? What moved?">${state.weeklyWins}</textarea>
     <label>Challenges</label>
-    <textarea rows="3" oninput="state.weeklyChallenges=this.value" placeholder="What got in the way?">${state.weeklyChallenges}</textarea>
+    <textarea rows="3" onchange="state.weeklyChallenges=this.value" placeholder="What got in the way?">${state.weeklyChallenges}</textarea>
     <label>Adjustments for next week</label>
-    <textarea rows="3" oninput="state.weeklyAdjustments=this.value" placeholder="What bricks need to move?">${state.weeklyAdjustments}</textarea>
-    <button class="btn-primary full" style="background:#8B5DB8;margin-top:12px" onclick="saveWeekly();this.textContent='Saved ✓'">Save Weekly Review</button>
-  ` : "";
-
+    <textarea rows="3" onchange="state.weeklyAdjustments=this.value" placeholder="What bricks need to move?">${state.weeklyAdjustments}</textarea>
+    <button class="btn-primary full" style="background:#8B5DB8;margin-top:12px" onclick="saveWeekly();this.textContent='Saved ✓'">Save Weekly Review</button>`:"";
   return `
     <div class="progress-box">
       <div style="font-size:13px;color:#888;margin-bottom:6px">Today's completion</div>
@@ -567,21 +682,18 @@ function renderCheckin() {
     <div class="section-head">Which bricks did you complete today?</div>
     ${brickRows}
     <label style="margin-top:20px">End of day note</label>
-    <textarea rows="4" oninput="state.todayNote=this.value" placeholder="How did today go? What needs to move tomorrow?">${state.todayNote}</textarea>
+    <textarea rows="4" onchange="state.todayNote=this.value" placeholder="How did today go? What needs to move tomorrow?">${state.todayNote}</textarea>
     <button class="btn-primary full" style="margin-top:12px" onclick="saveCheckin();this.textContent='Saved ✓'">Save Check-In</button>
     ${weeklySection}`;
 }
 
 function toggleCheckin(id) {
-  if (state.todayCompleted.includes(id)) {
-    state.todayCompleted = state.todayCompleted.filter(i=>i!==id);
-  } else {
-    state.todayCompleted.push(id);
-  }
+  if(state.todayCompleted.includes(id)) state.todayCompleted=state.todayCompleted.filter(i=>i!==id);
+  else state.todayCompleted.push(id);
   render();
 }
 
-// BOOT
+// ---- BOOT ----
 loadState();
 render();
 </script>
