@@ -61,8 +61,6 @@
     .goal-count { font-size: 11px; color: #bbb; margin-left: 4px; }
     .linked-goal { font-size: 11px; color: #bbb; margin-top: 3px; }
     .section-divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
-    .template-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-radius: 10px; margin-bottom: 8px; border: 2px solid #eee; background: #fafafa; cursor: pointer; }
-    .template-card.active-template { border-color: #6B7FD7; background: #EEF0FB; }
     .archive-item { padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 4px; border-left: 3px solid #ddd; }
   </style>
 </head>
@@ -99,14 +97,87 @@ const DEFAULT_TEMPLATE_BRICKS = [
   { id:"b19", category:"spiritual", label:"Lists / Tomorrow Prep",start:"19:30", end:"20:00" },
 ];
 
-const DEFAULT_INTENTIONS = [
+const SEED_INTENTIONS = [
   { id:"i1", text:"Build a life of creative sovereignty and financial freedom" },
   { id:"i2", text:"Be fully present for my family and community" },
   { id:"i3", text:"Create work that compounds quietly and announces itself through impact" },
+  { id:"i4", text:"Deepen my conscious contact with God and live in full integrity" },
+  { id:"i5", text:"Build more harmonious relationships with Anna, my kids, myself" },
+  { id:"i6", text:"Be of service in all that I do" },
+];
+
+const SEED_GOALS = [
+  { id:"g1",  category:"spiritual", text:"Turn over DA steps" },
+  { id:"g2",  category:"spiritual", text:"Attend vipassana retreat" },
+  { id:"g3",  category:"spiritual", text:"Find three more ways to be of service" },
+  { id:"g4",  category:"spiritual", text:"Deepen my therapy work" },
+  { id:"g5",  category:"spiritual", text:"Finish ACA laundry list" },
+  { id:"g6",  category:"physical",  text:"Deepen qigong/tai chi practice" },
+  { id:"g7",  category:"physical",  text:"Workout consistently for 3 months" },
+  { id:"g8",  category:"physical",  text:"Get neurological tests" },
+  { id:"g9",  category:"physical",  text:"Run a 10k" },
+  { id:"g10", category:"physical",  text:"Cut out coffee" },
+  { id:"g11", category:"financial", text:"Get out of debt" },
+  { id:"g12", category:"financial", text:"Invest in things I believe in" },
+  { id:"g13", category:"financial", text:"Open Ostara" },
+  { id:"g14", category:"financial", text:"Earn money from Opt Out" },
+  { id:"g15", category:"financial", text:"Reach $10k/month (immediate target) then $30k/month" },
+  { id:"g16", category:"financial", text:"Buy a home" },
+  { id:"g17", category:"family",    text:"Have a baby" },
+  { id:"g18", category:"family",    text:"Build trust and safety with Anna" },
+  { id:"g19", category:"family",    text:"Bring my family together" },
+  { id:"g20", category:"family",    text:"Find a mentor" },
+  { id:"g21", category:"family",    text:"Join or start a mens group" },
+  { id:"g22", category:"family",    text:"Join QIVC" },
+  { id:"g23", category:"family",    text:"Get more sponsees/add service commitments" },
+  { id:"g24", category:"creative",  text:"Release 4 Opt Out EPs" },
+  { id:"g25", category:"creative",  text:"Tour" },
+  { id:"g26", category:"creative",  text:"Grow Dispatches to 100k subscribers" },
+  { id:"g27", category:"creative",  text:"Create 4 Ostara recipes" },
+  { id:"g28", category:"creative",  text:"Write 20 more quantum poems" },
+  { id:"g29", category:"creative",  text:"Write a book" },
+  { id:"g30", category:"creative",  text:"Create a workshop/retreat for men" },
+];
+
+const SEED_MILESTONES = [
+  { id:"m1",  category:"spiritual", goalId:"g1",  text:"Complete DA steps 1-3",                              done:false, month:"June 2026" },
+  { id:"m2",  category:"spiritual", goalId:"g5",  text:"Complete one ACA laundry list step",                 done:false, month:"June 2026" },
+  { id:"m3",  category:"spiritual", goalId:"g3",  text:"Identify and commit to 2 new service opportunities", done:false, month:"June 2026" },
+  { id:"m4",  category:"spiritual", goalId:"g2",  text:"Book vipassana retreat (even if it's fall/winter)",  done:false, month:"June 2026" },
+  { id:"m5",  category:"spiritual", goalId:"g4",  text:"Complete one therapy goal identified with therapist", done:false, month:"June 2026" },
+  { id:"m6",  category:"physical",  goalId:"g7",  text:"Work out 4x/week for 8 consecutive weeks",           done:false, month:"June 2026" },
+  { id:"m7",  category:"physical",  goalId:"g9",  text:"Complete first 5k run",                              done:false, month:"June 2026" },
+  { id:"m8",  category:"physical",  goalId:"g8",  text:"Schedule neurological evaluation",                   done:false, month:"June 2026" },
+  { id:"m9",  category:"physical",  goalId:"g10", text:"Cut coffee to zero by end of July",                  done:false, month:"June 2026" },
+  { id:"m10", category:"physical",  goalId:"g6",  text:"Try at least two qigong classes",                    done:false, month:"June 2026" },
+  { id:"m11", category:"financial", goalId:"g15", text:"Close Hyperballad renewal at base + milestone structure", done:false, month:"June 2026" },
+  { id:"m12", category:"financial", goalId:"g15", text:"Sign one new COL client from active pipeline",       done:false, month:"June 2026" },
+  { id:"m13", category:"financial", goalId:"g15", text:"Reach $6k/month recurring revenue",                  done:false, month:"June 2026" },
+  { id:"m14", category:"financial", goalId:"g13", text:"Complete Ostara investor follow-up sequence (Aja, 2 others)", done:false, month:"June 2026" },
+  { id:"m15", category:"financial", goalId:"g11", text:"Resolve or restructure one debt obligation",         done:false, month:"June 2026" },
+  { id:"m16", category:"family",    goalId:"g22", text:"Attend QIVC MOP meeting to move associate membership forward", done:false, month:"June 2026" },
+  { id:"m17", category:"family",    goalId:"g18", text:"Have one intentional trip or experience with Anna",  done:false, month:"June 2026" },
+  { id:"m18", category:"family",    goalId:"g19", text:"Schedule one gathering that brings family together",  done:false, month:"June 2026" },
+  { id:"m19", category:"family",    goalId:"g20", text:"Identify a mentor and make first ask",               done:false, month:"June 2026" },
+  { id:"m20", category:"creative",  goalId:"g24", text:"Complete release plan and start promoting Opt Out EP", done:false, month:"June 2026" },
+  { id:"m21", category:"creative",  goalId:"g26", text:"Publish 1 Dispatches interview",                    done:false, month:"June 2026" },
+  { id:"m22", category:"creative",  goalId:"g28", text:"Write 5 quantum poems",                             done:false, month:"June 2026" },
+  { id:"m23", category:"creative",  goalId:"g24", text:"Write two new songs",                               done:false, month:"June 2026" },
+  { id:"m24", category:"creative",  goalId:"g25", text:"Book 3 shows in support of EP release",             done:false, month:"June 2026" },
+  { id:"m25", category:"creative",  goalId:"g25", text:"Rehearse for solo Opt Out shows",                   done:false, month:"June 2026" },
+  { id:"m26", category:"creative",  goalId:"g29", text:"Draft outline for book or workshop concept",        done:false, month:"June 2026" },
+];
+
+const SEED_LISTS = [
+  { id:"l1", text:"MAS prep & research",       category:"financial", project:"MAS",        done:false, date:"2026-06-30" },
+  { id:"l2", text:"COL pipeline outreach",     category:"financial", project:"COL",        done:false, date:"2026-06-30" },
+  { id:"l3", text:"Call USAA",                 category:"financial", project:"",           done:false, date:"2026-06-30" },
+  { id:"l4", text:"Follow up about MOP meeting",category:"family",   project:"",           done:false, date:"2026-06-30" },
+  { id:"l5", text:"Send Dispatches emails",    category:"creative",  project:"",           done:false, date:"2026-06-30" },
+  { id:"l6", text:"Respond to Matthias email", category:"creative",  project:"Opt Out",    done:false, date:"2026-06-30" },
 ];
 
 const TABS = ["Bricks","Intentions","Goals","Milestones","Lists","Check-In"];
-
 const cat = id => CATEGORIES.find(c=>c.id===id)||CATEGORIES[0];
 const todayStr = () => new Date().toISOString().split("T")[0];
 const isSaturday = () => new Date().getDay()===6;
@@ -115,33 +186,30 @@ const uid = () => Math.random().toString(36).substr(2,9);
 const deepCopy = obj => JSON.parse(JSON.stringify(obj));
 
 let state = {
-  activeTab: "Bricks",
-  // Templates
-  templates: [{ id:"t1", name:"Standard Day", bricks: deepCopy(DEFAULT_TEMPLATE_BRICKS) }],
-  activeTemplateId: "t1",
-  todayBricks: deepCopy(DEFAULT_TEMPLATE_BRICKS),
-  // Content
-  intentions: DEFAULT_INTENTIONS,
-  goals: [],
-  milestones: [],
-  lists: [],
-  listArchive: {},
-  listView: "category",
-  checkins: {},
-  todayCompleted: [],
-  todayNote: "",
-  weeklyWins: "", weeklyChallenges: "", weeklyAdjustments: "",
-  // UI
-  showAddBrick: false,
-  editingBrickId: null,
-  showAddTemplate: false,
-  editingTemplateId: null,
-  newTemplateName: "",
-  newBrick: { category:"spiritual", label:"", start:"09:00", end:"09:30" },
-  newIntention: "",
-  newGoal: { text:"", category:"spiritual" },
-  newMilestone: { text:"", category:"spiritual", goalId:"" },
-  newItem: { text:"", category:"spiritual", project:"" },
+  activeTab:"Bricks",
+  templates:[{ id:"t1", name:"Standard Day", bricks:deepCopy(DEFAULT_TEMPLATE_BRICKS) }],
+  activeTemplateId:"t1",
+  todayBricks:deepCopy(DEFAULT_TEMPLATE_BRICKS),
+  intentions:deepCopy(SEED_INTENTIONS),
+  goals:deepCopy(SEED_GOALS),
+  milestones:deepCopy(SEED_MILESTONES),
+  lists:deepCopy(SEED_LISTS),
+  listArchive:{},
+  listView:"category",
+  checkins:{},
+  todayCompleted:[],
+  todayNote:"",
+  weeklyWins:"", weeklyChallenges:"", weeklyAdjustments:"",
+  showAddBrick:false,
+  editingBrickId:null,
+  showAddTemplate:false,
+  editingTemplateId:null,
+  newTemplateName:"",
+  newBrick:{ category:"spiritual", label:"", start:"09:00", end:"09:30" },
+  newIntention:"",
+  newGoal:{ text:"", category:"spiritual" },
+  newMilestone:{ text:"", category:"spiritual", goalId:"" },
+  newItem:{ text:"", category:"spiritual", project:"" },
 };
 
 function loadState() {
@@ -152,7 +220,7 @@ function loadState() {
       if (v) state[k] = JSON.parse(v);
     });
     const td = state.checkins[todayStr()];
-    if (td) { state.todayCompleted = td.completed||[]; state.todayNote = td.note||""; }
+    if (td) { state.todayCompleted=td.completed||[]; state.todayNote=td.note||""; }
     const wr = state.checkins["weekly_"+todayStr()];
     if (wr) { state.weeklyWins=wr.wins||""; state.weeklyChallenges=wr.challenges||""; state.weeklyAdjustments=wr.adjustments||""; }
   } catch(e) {}
@@ -162,8 +230,12 @@ function persist(key) {
   try { localStorage.setItem("5x5_"+key, JSON.stringify(state[key])); } catch(e) {}
 }
 
+function persistAll() {
+  ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins"].forEach(persist);
+}
+
 function saveCheckin() {
-  state.checkins[todayStr()] = { completed: state.todayCompleted, note: state.todayNote };
+  state.checkins[todayStr()] = { completed:state.todayCompleted, note:state.todayNote };
   persist("checkins");
 }
 
@@ -176,11 +248,10 @@ function archiveCompletedLists() {
   const completed = state.lists.filter(l=>l.done);
   if (!completed.length) { alert("No completed tasks to archive."); return; }
   const dateKey = todayStr();
-  if (!state.listArchive[dateKey]) state.listArchive[dateKey] = [];
+  if (!state.listArchive[dateKey]) state.listArchive[dateKey]=[];
   state.listArchive[dateKey].push(...completed);
   state.lists = state.lists.filter(l=>!l.done);
-  persist("lists");
-  persist("listArchive");
+  persist("lists"); persist("listArchive");
   render();
 }
 
@@ -192,42 +263,37 @@ function render() {
     </div>
     <div class="tabs">${TABS.map(t=>`<button class="tab-btn${state.activeTab===t?" active":""}" onclick="setTab('${t}')">${t}</button>`).join("")}</div>
     <div id="content"></div>
-    ${state.showAddBrick ? renderAddBrickModal() : ""}
-    ${state.showAddTemplate ? renderAddTemplateModal() : ""}
+    ${state.showAddBrick?renderAddBrickModal():""}
+    ${state.showAddTemplate?renderAddTemplateModal():""}
   `;
   const content = document.getElementById("content");
-  if (state.activeTab==="Bricks") content.innerHTML = renderBricks();
-  else if (state.activeTab==="Intentions") content.innerHTML = renderIntentions();
-  else if (state.activeTab==="Goals") content.innerHTML = renderGoals();
-  else if (state.activeTab==="Milestones") content.innerHTML = renderMilestones();
-  else if (state.activeTab==="Lists") content.innerHTML = renderLists();
-  else if (state.activeTab==="Check-In") content.innerHTML = renderCheckin();
+  if (state.activeTab==="Bricks") content.innerHTML=renderBricks();
+  else if (state.activeTab==="Intentions") content.innerHTML=renderIntentions();
+  else if (state.activeTab==="Goals") content.innerHTML=renderGoals();
+  else if (state.activeTab==="Milestones") content.innerHTML=renderMilestones();
+  else if (state.activeTab==="Lists") content.innerHTML=renderLists();
+  else if (state.activeTab==="Check-In") content.innerHTML=renderCheckin();
 }
 
 function setTab(t) { state.activeTab=t; render(); }
 
-// ---- BRICKS ----
+// BRICKS
 function renderBricks() {
-  const activeTemplate = state.templates.find(t=>t.id===state.activeTemplateId);
   const sorted = [...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
-
-  const templateSelector = `
+  const legend = CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:5px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
+  const templateBar = `
     <div style="margin-bottom:20px">
       <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Today's Template</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        ${state.templates.map(t=>`
-          <button onclick="loadTemplate('${t.id}')" style="padding:8px 14px;border-radius:20px;border:2px solid ${state.activeTemplateId===t.id?"#6B7FD7":"#eee"};background:${state.activeTemplateId===t.id?"#EEF0FB":"#fafafa"};color:${state.activeTemplateId===t.id?"#6B7FD7":"#666"};font-size:13px;font-weight:${state.activeTemplateId===t.id?700:400};cursor:pointer;font-family:inherit">${t.name}</button>
-        `).join("")}
+        ${state.templates.map(t=>`<button onclick="loadTemplate('${t.id}')" style="padding:8px 14px;border-radius:20px;border:2px solid ${state.activeTemplateId===t.id?"#6B7FD7":"#eee"};background:${state.activeTemplateId===t.id?"#EEF0FB":"#fafafa"};color:${state.activeTemplateId===t.id?"#6B7FD7":"#666"};font-size:13px;font-weight:${state.activeTemplateId===t.id?700:400};cursor:pointer;font-family:inherit">${t.name}</button>`).join("")}
         <button onclick="state.showAddTemplate=true;render()" style="padding:8px 14px;border-radius:20px;border:2px dashed #ddd;background:none;color:#aaa;font-size:13px;cursor:pointer;font-family:inherit">+ New</button>
       </div>
-      ${activeTemplate ? `<div style="display:flex;gap:8px">
-        <button onclick="editTemplate('${activeTemplate.id}')" class="btn-ghost" style="font-size:12px">Edit template</button>
-        ${state.templates.length>1?`<button onclick="deleteTemplate('${activeTemplate.id}')" class="btn-ghost btn-danger" style="font-size:12px">Delete</button>`:""}
-      </div>`:""}
+      <div style="display:flex;gap:8px">
+        <button onclick="editTemplate('${state.activeTemplateId}')" class="btn-ghost" style="font-size:12px">Edit name</button>
+        ${state.templates.length>1?`<button onclick="deleteTemplate('${state.activeTemplateId}')" class="btn-ghost btn-danger" style="font-size:12px">Delete</button>`:""}
+        <button onclick="saveTodayToTemplate()" class="btn-ghost" style="font-size:12px;color:#6B7FD7">Save today to template</button>
+      </div>
     </div>`;
-
-  const legend = CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:5px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
-
   const rows = sorted.map((brick,idx)=>{
     const c = cat(brick.category);
     if (state.editingBrickId===brick.id) {
@@ -245,10 +311,7 @@ function renderBricks() {
           <select onchange="updateBrickField('${brick.id}','category',this.value)">
             ${CATEGORIES.map(c=>`<option value="${c.id}"${brick.category===c.id?" selected":""}>${c.label}</option>`).join("")}
           </select>
-          <div class="flex-row">
-            <button class="btn-primary btn-small" style="background:${c.color}" onclick="state.editingBrickId=null;persist('todayBricks');render()">Done</button>
-            <button class="btn-ghost" onclick="saveBrickToTemplate('${brick.id}')" style="font-size:12px">Save to template</button>
-          </div>
+          <button class="btn-primary btn-small" style="background:${c.color}" onclick="state.editingBrickId=null;render()">Done</button>
         </div>
       </div>`;
     }
@@ -266,9 +329,7 @@ function renderBricks() {
       </div>
     </div>`;
   }).join("");
-
-  return `
-    ${templateSelector}
+  return `${templateBar}
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <span style="color:#888;font-size:13px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</span>
       <button class="btn-primary btn-small" style="background:#1a1a1a" onclick="state.showAddBrick=true;render()">+ Add Brick</button>
@@ -280,78 +341,61 @@ function renderBricks() {
 function loadTemplate(id) {
   const t = state.templates.find(t=>t.id===id);
   if (!t) return;
-  state.activeTemplateId = id;
-  state.todayBricks = deepCopy(t.bricks);
-  persist("activeTemplateId");
-  persist("todayBricks");
+  state.activeTemplateId=id;
+  state.todayBricks=deepCopy(t.bricks);
+  persist("activeTemplateId"); persist("todayBricks");
   render();
 }
 
-function moveBrick(id, dir) {
-  const sorted = [...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
-  const idx = sorted.findIndex(b=>b.id===id);
-  const target = idx+dir;
-  if (target<0||target>=sorted.length) return;
+function saveTodayToTemplate() {
+  state.templates = state.templates.map(t=>t.id===state.activeTemplateId?{...t,bricks:deepCopy(state.todayBricks)}:t);
+  persist("templates");
+  alert("Today's bricks saved to template.");
+}
+
+function moveBrick(id,dir) {
+  const sorted=[...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
+  const idx=sorted.findIndex(b=>b.id===id), target=idx+dir;
+  if(target<0||target>=sorted.length) return;
   const t1=sorted[idx].start, e1=sorted[idx].end;
   sorted[idx]={...sorted[idx],start:sorted[target].start,end:sorted[target].end};
   sorted[target]={...sorted[target],start:t1,end:e1};
-  state.todayBricks = sorted;
-  persist("todayBricks");
-  render();
+  state.todayBricks=sorted; persist("todayBricks"); render();
 }
 
-function updateBrickField(id, field, val) {
-  state.todayBricks = state.todayBricks.map(b=>b.id===id?{...b,[field]:val}:b);
+function updateBrickField(id,field,val) {
+  state.todayBricks=state.todayBricks.map(b=>b.id===id?{...b,[field]:val}:b);
   persist("todayBricks");
 }
 
 function deleteTodayBrick(id) {
-  state.todayBricks = state.todayBricks.filter(b=>b.id!==id);
-  persist("todayBricks");
-  render();
-}
-
-function saveBrickToTemplate(brickId) {
-  const brick = state.todayBricks.find(b=>b.id===brickId);
-  if (!brick) return;
-  state.templates = state.templates.map(t=>{
-    if (t.id!==state.activeTemplateId) return t;
-    const exists = t.bricks.find(b=>b.id===brickId);
-    const newBricks = exists ? t.bricks.map(b=>b.id===brickId?{...brick}:b) : [...t.bricks, {...brick}];
-    return {...t, bricks: newBricks};
-  });
-  persist("templates");
-  state.editingBrickId = null;
-  render();
+  state.todayBricks=state.todayBricks.filter(b=>b.id!==id);
+  persist("todayBricks"); render();
 }
 
 function editTemplate(id) {
-  state.editingTemplateId = id;
-  const t = state.templates.find(t=>t.id===id);
-  state.newTemplateName = t ? t.name : "";
-  state.showAddTemplate = true;
-  render();
+  state.editingTemplateId=id;
+  const t=state.templates.find(t=>t.id===id);
+  state.newTemplateName=t?t.name:"";
+  state.showAddTemplate=true; render();
 }
 
 function deleteTemplate(id) {
-  if (state.templates.length<=1) return;
-  state.templates = state.templates.filter(t=>t.id!==id);
-  state.activeTemplateId = state.templates[0].id;
-  state.todayBricks = deepCopy(state.templates[0].bricks);
-  persist("templates");
-  persist("activeTemplateId");
-  persist("todayBricks");
-  render();
+  if(state.templates.length<=1) return;
+  state.templates=state.templates.filter(t=>t.id!==id);
+  state.activeTemplateId=state.templates[0].id;
+  state.todayBricks=deepCopy(state.templates[0].bricks);
+  persist("templates"); persist("activeTemplateId"); persist("todayBricks"); render();
 }
 
 function renderAddTemplateModal() {
-  const isEdit = !!state.editingTemplateId;
+  const isEdit=!!state.editingTemplateId;
   return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddTemplate=false;state.editingTemplateId=null;render()}">
     <div class="modal-box">
-      <div class="modal-title">${isEdit?"Edit Template":"New Template"}</div>
+      <div class="modal-title">${isEdit?"Rename Template":"New Template"}</div>
       <div class="flex-col">
-        <input placeholder="Template name (e.g. MWF, Travel Day)" id="tname" value="${state.newTemplateName}" oninput="state.newTemplateName=this.value" />
-        <div class="sub-text" style="margin:0">${isEdit?"Rename this template.":"This will copy today's current bricks as the starting point. You can edit bricks in the Bricks tab after loading this template."}</div>
+        <input id="tname" placeholder="Template name (e.g. MWF, Travel Day)" value="${state.newTemplateName}" oninput="state.newTemplateName=this.value" />
+        ${!isEdit?`<div class="sub-text" style="margin:0">Copies today's bricks as the starting point.</div>`:""}
         <div class="flex-row">
           <button class="btn-primary" onclick="saveTemplate()">${isEdit?"Save":"Create"}</button>
           <button class="btn-ghost" onclick="state.showAddTemplate=false;state.editingTemplateId=null;render()">Cancel</button>
@@ -362,30 +406,26 @@ function renderAddTemplateModal() {
 }
 
 function saveTemplate() {
-  const name = state.newTemplateName.trim();
-  if (!name) return;
-  if (state.editingTemplateId) {
-    state.templates = state.templates.map(t=>t.id===state.editingTemplateId?{...t,name}:t);
+  const name=(document.getElementById("tname")||{}).value||state.newTemplateName;
+  if(!name.trim()) return;
+  if(state.editingTemplateId) {
+    state.templates=state.templates.map(t=>t.id===state.editingTemplateId?{...t,name:name.trim()}:t);
   } else {
-    const newT = { id:uid(), name, bricks: deepCopy(state.todayBricks) };
+    const newT={id:uid(),name:name.trim(),bricks:deepCopy(state.todayBricks)};
     state.templates.push(newT);
-    state.activeTemplateId = newT.id;
+    state.activeTemplateId=newT.id;
   }
-  state.newTemplateName = "";
-  state.editingTemplateId = null;
-  state.showAddTemplate = false;
-  persist("templates");
-  persist("activeTemplateId");
-  render();
+  state.newTemplateName=""; state.editingTemplateId=null; state.showAddTemplate=false;
+  persist("templates"); persist("activeTemplateId"); render();
 }
 
 function renderAddBrickModal() {
-  const nb = state.newBrick;
+  const nb=state.newBrick;
   return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddBrick=false;render()}">
     <div class="modal-box">
       <div class="modal-title">New Brick</div>
       <div class="flex-col">
-        <input placeholder="Label" id="nb-label" value="${nb.label}" oninput="state.newBrick.label=this.value" />
+        <input id="nb-label" placeholder="Label" value="${nb.label}" oninput="state.newBrick.label=this.value" />
         <select onchange="state.newBrick.category=this.value">
           ${CATEGORIES.map(c=>`<option value="${c.id}"${nb.category===c.id?" selected":""}>${c.label}</option>`).join("")}
         </select>
@@ -403,25 +443,22 @@ function renderAddBrickModal() {
 }
 
 function addBrick() {
-  const label = document.getElementById("nb-label")?.value || state.newBrick.label;
-  if (!label.trim()) return;
-  const brick = {...state.newBrick, label:label.trim(), id:uid()};
-  state.todayBricks.push(brick);
-  state.newBrick = { category:"spiritual", label:"", start:"09:00", end:"09:30" };
-  state.showAddBrick = false;
-  persist("todayBricks");
-  render();
+  const el=document.getElementById("nb-label");
+  const label=(el?el.value:state.newBrick.label).trim();
+  if(!label) return;
+  state.todayBricks.push({...state.newBrick,label,id:uid()});
+  state.newBrick={category:"spiritual",label:"",start:"09:00",end:"09:30"};
+  state.showAddBrick=false; persist("todayBricks"); render();
 }
 
-// ---- INTENTIONS ----
+// INTENTIONS
 function renderIntentions() {
-  const rows = state.intentions.map(i=>`
+  const rows=state.intentions.map(i=>`
     <div class="list-row">
       <span style="flex:1;font-size:14px;color:#333">${i.text}</span>
       <button class="btn-ghost btn-danger" onclick="deleteIntention('${i.id}')">✕</button>
     </div>`).join("");
-  return `
-    <div class="section-head">Intentions</div>
+  return `<div class="section-head">Intentions</div>
     <div class="sub-text">What you feel called to bring into form. No timeline. From the heart.</div>
     ${rows||'<div class="empty-msg">No intentions yet.</div>'}
     <div style="margin-top:12px">
@@ -431,24 +468,22 @@ function renderIntentions() {
 }
 
 function addIntention() {
-  const el = document.getElementById("new-intention");
-  const t = (el?el.value:state.newIntention).trim();
-  if (!t) return;
+  const el=document.getElementById("new-intention");
+  const t=(el?el.value:state.newIntention).trim();
+  if(!t) return;
   state.intentions.push({id:uid(),text:t});
-  state.newIntention="";
-  persist("intentions");
-  render();
+  state.newIntention=""; persist("intentions"); render();
 }
 
 function deleteIntention(id) { state.intentions=state.intentions.filter(i=>i.id!==id); persist("intentions"); render(); }
 
-// ---- GOALS ----
+// GOALS
 function renderGoals() {
-  const sections = CATEGORIES.map(c=>{
-    const cg = state.goals.filter(g=>g.category===c.id);
-    const rows = cg.map(g=>{
-      const ms = state.milestones.filter(m=>m.goalId===g.id);
-      const done = ms.filter(m=>m.done).length;
+  const sections=CATEGORIES.map(c=>{
+    const cg=state.goals.filter(g=>g.category===c.id);
+    const rows=cg.map(g=>{
+      const ms=state.milestones.filter(m=>m.goalId===g.id);
+      const done=ms.filter(m=>m.done).length;
       return `<div class="list-row" style="margin-left:16px;margin-bottom:6px">
         <span style="flex:1;font-size:14px;color:#333">${g.text}</span>
         ${ms.length?`<span class="goal-count">${done}/${ms.length}</span>`:""}
@@ -460,8 +495,7 @@ function renderGoals() {
       ${rows||`<div class="empty-msg">No goals yet.</div>`}
     </div>`;
   }).join("");
-  return `
-    <div class="section-head">Goals</div>
+  return `<div class="section-head">Goals</div>
     <div class="sub-text">No timeline. Add milestones in the Milestones tab.</div>
     ${sections}
     <hr class="section-divider"/>
@@ -475,18 +509,16 @@ function renderGoals() {
 }
 
 function addGoal() {
-  const el = document.getElementById("new-goal-text");
-  const t = (el?el.value:state.newGoal.text).trim();
-  if (!t) return;
+  const el=document.getElementById("new-goal-text");
+  const t=(el?el.value:state.newGoal.text).trim();
+  if(!t) return;
   state.goals.push({id:uid(),text:t,category:state.newGoal.category});
-  state.newGoal={text:"",category:"spiritual"};
-  persist("goals");
-  render();
+  state.newGoal={text:"",category:"spiritual"}; persist("goals"); render();
 }
 
 function deleteGoal(id) { state.goals=state.goals.filter(g=>g.id!==id); persist("goals"); render(); }
 
-// ---- MILESTONES ----
+// MILESTONES
 function renderMilestones() {
   const total=state.milestones.length, done=state.milestones.filter(m=>m.done).length;
   const pct=total>0?Math.round((done/total)*100):0;
@@ -517,8 +549,7 @@ function renderMilestones() {
   }).join("");
   const goalOptions=state.goals.filter(g=>g.category===state.newMilestone.category)
     .map(g=>`<option value="${g.id}"${state.newMilestone.goalId===g.id?" selected":""}>${g.text}</option>`).join("");
-  return `
-    <div class="progress-box">
+  return `<div class="progress-box">
       <div style="font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${currentMonth()}</div>
       <div style="display:flex;justify-content:space-between;align-items:flex-end">
         <div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} complete</div></div>
@@ -549,17 +580,15 @@ function addMilestone() {
   const t=(el?el.value:state.newMilestone.text).trim();
   if(!t) return;
   state.milestones.push({id:uid(),text:t,category:state.newMilestone.category,goalId:state.newMilestone.goalId,done:false,month:currentMonth()});
-  state.newMilestone={text:"",category:"spiritual",goalId:""};
-  persist("milestones");
-  render();
+  state.newMilestone={text:"",category:"spiritual",goalId:""}; persist("milestones"); render();
 }
 
-// ---- LISTS ----
+// LISTS
 function renderLists() {
   const projects=[...new Set(state.lists.map(l=>l.project).filter(Boolean))];
-  const completedCount = state.lists.filter(l=>l.done).length;
+  const completedCount=state.lists.filter(l=>l.done).length;
   let body="";
-  if(state.listView==="category"){
+  if(state.listView==="category") {
     body=CATEGORIES.map(c=>{
       const items=state.lists.filter(l=>l.category===c.id);
       const rows=items.map(item=>`
@@ -597,23 +626,16 @@ function renderLists() {
     body=projSections+(untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${untaggedRows}</div>`:"");
     if(!body.trim()) body=`<div class="empty-msg" style="margin-bottom:20px">No tasks yet.</div>`;
   }
-
-  // Archive section
-  const archiveDates = Object.keys(state.listArchive).sort().reverse().slice(0,5);
-  const archiveSection = archiveDates.length ? `
+  const archiveDates=Object.keys(state.listArchive).sort().reverse().slice(0,5);
+  const archiveSection=archiveDates.length?`
     <hr class="section-divider"/>
     <div class="section-head">Archive</div>
     <div class="sub-text">Completed tasks from previous days.</div>
-    ${archiveDates.map(d=>{
-      const items=state.listArchive[d];
-      return `<div style="margin-bottom:14px">
-        <div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>
-        ${items.map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}
-      </div>`;
-    }).join("")}` : "";
-
-  return `
-    <div class="flex-row" style="margin-bottom:20px">
+    ${archiveDates.map(d=>`<div style="margin-bottom:14px">
+      <div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>
+      ${state.listArchive[d].map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}
+    </div>`).join("")}`:"";
+  return `<div class="flex-row" style="margin-bottom:20px">
       <button class="pill-toggle" style="background:${state.listView==="category"?"#222":"#eee"};color:${state.listView==="category"?"#fff":"#555"}" onclick="state.listView='category';render()">By Category</button>
       <button class="pill-toggle" style="background:${state.listView==="project"?"#222":"#eee"};color:${state.listView==="project"?"#fff":"#555"}" onclick="state.listView='project';render()">By Project</button>
     </div>
@@ -641,12 +663,10 @@ function addList() {
   const p=(elp?elp.value:state.newItem.project).trim();
   if(!t) return;
   state.lists.push({id:uid(),text:t,category:state.newItem.category,project:p,done:false,date:todayStr()});
-  state.newItem={text:"",category:"spiritual",project:""};
-  persist("lists");
-  render();
+  state.newItem={text:"",category:"spiritual",project:""}; persist("lists"); render();
 }
 
-// ---- CHECK-IN ----
+// CHECK-IN
 function renderCheckin() {
   const sorted=[...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
   const total=sorted.length, done=state.todayCompleted.length;
@@ -672,8 +692,7 @@ function renderCheckin() {
     <label>Adjustments for next week</label>
     <textarea rows="3" onchange="state.weeklyAdjustments=this.value" placeholder="What bricks need to move?">${state.weeklyAdjustments}</textarea>
     <button class="btn-primary full" style="background:#8B5DB8;margin-top:12px" onclick="saveWeekly();this.textContent='Saved ✓'">Save Weekly Review</button>`:"";
-  return `
-    <div class="progress-box">
+  return `<div class="progress-box">
       <div style="font-size:13px;color:#888;margin-bottom:6px">Today's completion</div>
       <div class="progress-pct">${pct}%</div>
       <div class="progress-sub">${done} of ${total} bricks</div>
@@ -693,8 +712,8 @@ function toggleCheckin(id) {
   render();
 }
 
-// ---- BOOT ----
 loadState();
+persistAll();
 render();
 </script>
 </body>
