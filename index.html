@@ -28,25 +28,23 @@
     .btn-ghost { padding: 6px 10px; border-radius: 6px; background: none; border: none; cursor: pointer; font-size: 13px; color: #888; font-family: inherit; }
     .btn-danger { color: #d45f6b; }
     .btn-small { padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
+    .btn-restart { padding: 10px 16px; border-radius: 8px; background: #fff; color: #888; border: 1.5px solid #ddd; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; width: 100%; margin-top: 8px; }
     .arrow-btn { background: none; border: 1px solid #eee; border-radius: 4px; cursor: pointer; font-size: 10px; color: #bbb; padding: 3px 6px; line-height: 1; }
     .list-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 6px; }
     .progress-box { background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 24px; }
     .progress-pct { font-size: 32px; font-weight: 700; }
     .progress-sub { font-size: 12px; color: #aaa; margin-top: 2px; }
     .progress-bar-bg { margin-top: 12px; background: #e0e0e0; border-radius: 4px; height: 6px; }
-    .progress-bar-fill { height: 6px; border-radius: 4px; background: #6B7FD7; transition: width 0.3s; }
+    .progress-bar-fill { height: 6px; border-radius: 4px; transition: width 0.3s; }
     .cat-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
     .cat-label { font-weight: 700; font-size: 13px; }
     .cat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
-    .brick-card { flex: 1; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border-left-width: 4px; border-left-style: solid; }
-    .brick-label { font-weight: 600; font-size: 14px; }
-    .brick-time { font-size: 12px; color: #888; margin-top: 2px; }
     .checkin-brick { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; margin-bottom: 6px; cursor: pointer; border: 1px solid #eee; background: #fafafa; }
     .checkin-box { width: 22px; height: 22px; border-radius: 5px; background: #ddd; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 13px; color: #fff; }
     .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); display: flex; align-items: flex-end; justify-content: center; z-index: 100; }
     .modal-box { background: #fff; border-radius: 20px 20px 0 0; padding: 24px; width: 100%; max-width: 640px; max-height: 90vh; overflow-y: auto; }
     .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
-    .tag-pill { font-size: 11px; color: #aaa; background: #f0f0f0; border-radius: 4px; padding: 2px 7px; }
+    .tag-pill { font-size: 11px; color: #aaa; background: #f0f0f0; border-radius: 4px; padding: 2px 7px; white-space: nowrap; }
     .flex-row { display: flex; gap: 8px; }
     .flex-col { display: flex; flex-direction: column; gap: 10px; }
     .pill-toggle { padding: 7px 16px; border-radius: 20px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; }
@@ -62,6 +60,15 @@
     .linked-goal { font-size: 11px; color: #bbb; margin-top: 3px; }
     .section-divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
     .archive-item { padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 4px; border-left: 3px solid #ddd; }
+    /* Timeline */
+    .timeline-wrap { display: flex; gap: 0; margin-bottom: 24px; }
+    .timeline-times { display: flex; flex-direction: column; width: 44px; flex-shrink: 0; }
+    .timeline-time-label { font-size: 10px; color: #bbb; text-align: right; padding-right: 8px; line-height: 1; }
+    .timeline-col { flex: 1; position: relative; }
+    .timeline-brick { position: absolute; left: 0; right: 0; border-radius: 6px; padding: 4px 8px; overflow: hidden; cursor: pointer; border-left: 3px solid transparent; }
+    .timeline-brick-label { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .timeline-brick-time { font-size: 10px; opacity: 0.7; }
+    .view-toggle { display: flex; gap: 8px; margin-bottom: 16px; }
   </style>
 </head>
 <body>
@@ -140,41 +147,41 @@ const SEED_GOALS = [
 ];
 
 const SEED_MILESTONES = [
-  { id:"m1",  category:"spiritual", goalId:"g1",  text:"Complete DA steps 1-3",                              done:false, month:"June 2026" },
-  { id:"m2",  category:"spiritual", goalId:"g5",  text:"Complete one ACA laundry list step",                 done:false, month:"June 2026" },
-  { id:"m3",  category:"spiritual", goalId:"g3",  text:"Identify and commit to 2 new service opportunities", done:false, month:"June 2026" },
-  { id:"m4",  category:"spiritual", goalId:"g2",  text:"Book vipassana retreat (even if it's fall/winter)",  done:false, month:"June 2026" },
+  { id:"m1",  category:"spiritual", goalId:"g1",  text:"Complete DA steps 1-3",                               done:false, month:"June 2026" },
+  { id:"m2",  category:"spiritual", goalId:"g5",  text:"Complete one ACA laundry list step",                  done:false, month:"June 2026" },
+  { id:"m3",  category:"spiritual", goalId:"g3",  text:"Identify and commit to 2 new service opportunities",  done:false, month:"June 2026" },
+  { id:"m4",  category:"spiritual", goalId:"g2",  text:"Book vipassana retreat (even if fall/winter)",        done:false, month:"June 2026" },
   { id:"m5",  category:"spiritual", goalId:"g4",  text:"Complete one therapy goal identified with therapist", done:false, month:"June 2026" },
-  { id:"m6",  category:"physical",  goalId:"g7",  text:"Work out 4x/week for 8 consecutive weeks",           done:false, month:"June 2026" },
-  { id:"m7",  category:"physical",  goalId:"g9",  text:"Complete first 5k run",                              done:false, month:"June 2026" },
-  { id:"m8",  category:"physical",  goalId:"g8",  text:"Schedule neurological evaluation",                   done:false, month:"June 2026" },
-  { id:"m9",  category:"physical",  goalId:"g10", text:"Cut coffee to zero by end of July",                  done:false, month:"June 2026" },
-  { id:"m10", category:"physical",  goalId:"g6",  text:"Try at least two qigong classes",                    done:false, month:"June 2026" },
+  { id:"m6",  category:"physical",  goalId:"g7",  text:"Work out 4x/week for 8 consecutive weeks",            done:false, month:"June 2026" },
+  { id:"m7",  category:"physical",  goalId:"g9",  text:"Complete first 5k run",                               done:false, month:"June 2026" },
+  { id:"m8",  category:"physical",  goalId:"g8",  text:"Schedule neurological evaluation",                    done:false, month:"June 2026" },
+  { id:"m9",  category:"physical",  goalId:"g10", text:"Cut coffee to zero by end of July",                   done:false, month:"June 2026" },
+  { id:"m10", category:"physical",  goalId:"g6",  text:"Try at least two qigong classes",                     done:false, month:"June 2026" },
   { id:"m11", category:"financial", goalId:"g15", text:"Close Hyperballad renewal at base + milestone structure", done:false, month:"June 2026" },
-  { id:"m12", category:"financial", goalId:"g15", text:"Sign one new COL client from active pipeline",       done:false, month:"June 2026" },
-  { id:"m13", category:"financial", goalId:"g15", text:"Reach $6k/month recurring revenue",                  done:false, month:"June 2026" },
+  { id:"m12", category:"financial", goalId:"g15", text:"Sign one new COL client from active pipeline",        done:false, month:"June 2026" },
+  { id:"m13", category:"financial", goalId:"g15", text:"Reach $6k/month recurring revenue",                   done:false, month:"June 2026" },
   { id:"m14", category:"financial", goalId:"g13", text:"Complete Ostara investor follow-up sequence (Aja, 2 others)", done:false, month:"June 2026" },
-  { id:"m15", category:"financial", goalId:"g11", text:"Resolve or restructure one debt obligation",         done:false, month:"June 2026" },
+  { id:"m15", category:"financial", goalId:"g11", text:"Resolve or restructure one debt obligation",          done:false, month:"June 2026" },
   { id:"m16", category:"family",    goalId:"g22", text:"Attend QIVC MOP meeting to move associate membership forward", done:false, month:"June 2026" },
-  { id:"m17", category:"family",    goalId:"g18", text:"Have one intentional trip or experience with Anna",  done:false, month:"June 2026" },
-  { id:"m18", category:"family",    goalId:"g19", text:"Schedule one gathering that brings family together",  done:false, month:"June 2026" },
-  { id:"m19", category:"family",    goalId:"g20", text:"Identify a mentor and make first ask",               done:false, month:"June 2026" },
+  { id:"m17", category:"family",    goalId:"g18", text:"Have one intentional trip or experience with Anna",   done:false, month:"June 2026" },
+  { id:"m18", category:"family",    goalId:"g19", text:"Schedule one gathering that brings family together",   done:false, month:"June 2026" },
+  { id:"m19", category:"family",    goalId:"g20", text:"Identify a mentor and make first ask",                done:false, month:"June 2026" },
   { id:"m20", category:"creative",  goalId:"g24", text:"Complete release plan and start promoting Opt Out EP", done:false, month:"June 2026" },
-  { id:"m21", category:"creative",  goalId:"g26", text:"Publish 1 Dispatches interview",                    done:false, month:"June 2026" },
-  { id:"m22", category:"creative",  goalId:"g28", text:"Write 5 quantum poems",                             done:false, month:"June 2026" },
-  { id:"m23", category:"creative",  goalId:"g24", text:"Write two new songs",                               done:false, month:"June 2026" },
-  { id:"m24", category:"creative",  goalId:"g25", text:"Book 3 shows in support of EP release",             done:false, month:"June 2026" },
-  { id:"m25", category:"creative",  goalId:"g25", text:"Rehearse for solo Opt Out shows",                   done:false, month:"June 2026" },
-  { id:"m26", category:"creative",  goalId:"g29", text:"Draft outline for book or workshop concept",        done:false, month:"June 2026" },
+  { id:"m21", category:"creative",  goalId:"g26", text:"Publish 1 Dispatches interview",                     done:false, month:"June 2026" },
+  { id:"m22", category:"creative",  goalId:"g28", text:"Write 5 quantum poems",                              done:false, month:"June 2026" },
+  { id:"m23", category:"creative",  goalId:"g24", text:"Write two new songs",                                done:false, month:"June 2026" },
+  { id:"m24", category:"creative",  goalId:"g25", text:"Book 3 shows in support of EP release",              done:false, month:"June 2026" },
+  { id:"m25", category:"creative",  goalId:"g25", text:"Rehearse for solo Opt Out shows",                    done:false, month:"June 2026" },
+  { id:"m26", category:"creative",  goalId:"g29", text:"Draft outline for book or workshop concept",         done:false, month:"June 2026" },
 ];
 
 const SEED_LISTS = [
-  { id:"l1", text:"MAS prep & research",       category:"financial", project:"MAS",        done:false, date:"2026-06-30" },
-  { id:"l2", text:"COL pipeline outreach",     category:"financial", project:"COL",        done:false, date:"2026-06-30" },
-  { id:"l3", text:"Call USAA",                 category:"financial", project:"",           done:false, date:"2026-06-30" },
-  { id:"l4", text:"Follow up about MOP meeting",category:"family",   project:"",           done:false, date:"2026-06-30" },
-  { id:"l5", text:"Send Dispatches emails",    category:"creative",  project:"",           done:false, date:"2026-06-30" },
-  { id:"l6", text:"Respond to Matthias email", category:"creative",  project:"Opt Out",    done:false, date:"2026-06-30" },
+  { id:"l1", text:"MAS prep & research",        category:"financial", project:"MAS",     done:false, date:"2026-06-30" },
+  { id:"l2", text:"COL pipeline outreach",      category:"financial", project:"COL",     done:false, date:"2026-06-30" },
+  { id:"l3", text:"Call USAA",                  category:"financial", project:"",        done:false, date:"2026-06-30" },
+  { id:"l4", text:"Follow up about MOP meeting",category:"family",    project:"",        done:false, date:"2026-06-30" },
+  { id:"l5", text:"Send Dispatches emails",     category:"creative",  project:"",        done:false, date:"2026-06-30" },
+  { id:"l6", text:"Respond to Matthias email",  category:"creative",  project:"Opt Out", done:false, date:"2026-06-30" },
 ];
 
 const TABS = ["Bricks","Intentions","Goals","Milestones","Lists","Check-In"];
@@ -184,9 +191,11 @@ const isSaturday = () => new Date().getDay()===6;
 const currentMonth = () => new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"});
 const uid = () => Math.random().toString(36).substr(2,9);
 const deepCopy = obj => JSON.parse(JSON.stringify(obj));
+const timeToMins = t => { const [h,m]=t.split(":").map(Number); return h*60+m; };
 
 let state = {
   activeTab:"Bricks",
+  brickView:"list", // "list" or "timeline"
   templates:[{ id:"t1", name:"Standard Day", bricks:deepCopy(DEFAULT_TEMPLATE_BRICKS) }],
   activeTemplateId:"t1",
   todayBricks:deepCopy(DEFAULT_TEMPLATE_BRICKS),
@@ -199,6 +208,7 @@ let state = {
   checkins:{},
   todayCompleted:[],
   todayNote:"",
+  todayListsDone:[],
   weeklyWins:"", weeklyChallenges:"", weeklyAdjustments:"",
   showAddBrick:false,
   editingBrickId:null,
@@ -214,49 +224,52 @@ let state = {
 
 function loadState() {
   try {
-    const keys = ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins"];
-    keys.forEach(k => {
-      const v = localStorage.getItem("5x5_"+k);
-      if (v) state[k] = JSON.parse(v);
-    });
-    const td = state.checkins[todayStr()];
-    if (td) { state.todayCompleted=td.completed||[]; state.todayNote=td.note||""; }
-    const wr = state.checkins["weekly_"+todayStr()];
-    if (wr) { state.weeklyWins=wr.wins||""; state.weeklyChallenges=wr.challenges||""; state.weeklyAdjustments=wr.adjustments||""; }
-  } catch(e) {}
+    const keys=["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins","brickView"];
+    keys.forEach(k=>{ const v=localStorage.getItem("5x5_"+k); if(v) state[k]=JSON.parse(v); });
+    const td=state.checkins[todayStr()];
+    if(td){ state.todayCompleted=td.completed||[]; state.todayNote=td.note||""; state.todayListsDone=td.listsDone||[]; }
+    const wr=state.checkins["weekly_"+todayStr()];
+    if(wr){ state.weeklyWins=wr.wins||""; state.weeklyChallenges=wr.challenges||""; state.weeklyAdjustments=wr.adjustments||""; }
+  } catch(e){}
 }
 
-function persist(key) {
-  try { localStorage.setItem("5x5_"+key, JSON.stringify(state[key])); } catch(e) {}
-}
+function persist(key){ try{ localStorage.setItem("5x5_"+key,JSON.stringify(state[key])); }catch(e){} }
+function persistAll(){ ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins","brickView"].forEach(persist); }
 
-function persistAll() {
-  ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins"].forEach(persist);
-}
-
-function saveCheckin() {
-  state.checkins[todayStr()] = { completed:state.todayCompleted, note:state.todayNote };
+function saveCheckin(){
+  state.checkins[todayStr()]={ completed:state.todayCompleted, note:state.todayNote, listsDone:state.todayListsDone };
   persist("checkins");
 }
 
-function saveWeekly() {
-  state.checkins["weekly_"+todayStr()] = { wins:state.weeklyWins, challenges:state.weeklyChallenges, adjustments:state.weeklyAdjustments };
+function saveWeekly(){
+  state.checkins["weekly_"+todayStr()]={ wins:state.weeklyWins, challenges:state.weeklyChallenges, adjustments:state.weeklyAdjustments };
   persist("checkins");
 }
 
-function archiveCompletedLists() {
-  const completed = state.lists.filter(l=>l.done);
-  if (!completed.length) { alert("No completed tasks to archive."); return; }
-  const dateKey = todayStr();
-  if (!state.listArchive[dateKey]) state.listArchive[dateKey]=[];
-  state.listArchive[dateKey].push(...completed);
-  state.lists = state.lists.filter(l=>!l.done);
-  persist("lists"); persist("listArchive");
+function doRestart(){
+  if(!confirm("Reset today's check-in and reload your default template? Your data (goals, lists, etc.) stays safe.")) return;
+  state.todayBricks=deepCopy(state.templates.find(t=>t.id===state.activeTemplateId)||state.templates[0]).bricks||deepCopy(DEFAULT_TEMPLATE_BRICKS);
+  state.todayCompleted=[];
+  state.todayNote="";
+  state.todayListsDone=[];
+  delete state.checkins[todayStr()];
+  persist("todayBricks"); persist("checkins");
+  alert("Fresh start. Morning practice first.");
   render();
 }
 
-function render() {
-  document.getElementById("app").innerHTML = `
+function archiveCompletedLists(){
+  const completed=state.lists.filter(l=>l.done);
+  if(!completed.length){ alert("No completed tasks to archive."); return; }
+  const dateKey=todayStr();
+  if(!state.listArchive[dateKey]) state.listArchive[dateKey]=[];
+  state.listArchive[dateKey].push(...completed);
+  state.lists=state.lists.filter(l=>!l.done);
+  persist("lists"); persist("listArchive"); render();
+}
+
+function render(){
+  document.getElementById("app").innerHTML=`
     <div class="header">
       <div class="header-eyebrow">Summer of Discipline</div>
       <div class="header-title">5×5 Bricks of Wellbeing</div>
@@ -266,43 +279,91 @@ function render() {
     ${state.showAddBrick?renderAddBrickModal():""}
     ${state.showAddTemplate?renderAddTemplateModal():""}
   `;
-  const content = document.getElementById("content");
-  if (state.activeTab==="Bricks") content.innerHTML=renderBricks();
-  else if (state.activeTab==="Intentions") content.innerHTML=renderIntentions();
-  else if (state.activeTab==="Goals") content.innerHTML=renderGoals();
-  else if (state.activeTab==="Milestones") content.innerHTML=renderMilestones();
-  else if (state.activeTab==="Lists") content.innerHTML=renderLists();
-  else if (state.activeTab==="Check-In") content.innerHTML=renderCheckin();
+  const content=document.getElementById("content");
+  if(state.activeTab==="Bricks") content.innerHTML=renderBricks();
+  else if(state.activeTab==="Intentions") content.innerHTML=renderIntentions();
+  else if(state.activeTab==="Goals") content.innerHTML=renderGoals();
+  else if(state.activeTab==="Milestones") content.innerHTML=renderMilestones();
+  else if(state.activeTab==="Lists") content.innerHTML=renderLists();
+  else if(state.activeTab==="Check-In") content.innerHTML=renderCheckin();
 }
 
-function setTab(t) { state.activeTab=t; render(); }
+function setTab(t){ state.activeTab=t; render(); }
 
-// BRICKS
-function renderBricks() {
-  const sorted = [...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
-  const legend = CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:5px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
-  const templateBar = `
-    <div style="margin-bottom:20px">
-      <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Today's Template</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
-        ${state.templates.map(t=>`<button onclick="loadTemplate('${t.id}')" style="padding:8px 14px;border-radius:20px;border:2px solid ${state.activeTemplateId===t.id?"#6B7FD7":"#eee"};background:${state.activeTemplateId===t.id?"#EEF0FB":"#fafafa"};color:${state.activeTemplateId===t.id?"#6B7FD7":"#666"};font-size:13px;font-weight:${state.activeTemplateId===t.id?700:400};cursor:pointer;font-family:inherit">${t.name}</button>`).join("")}
-        <button onclick="state.showAddTemplate=true;render()" style="padding:8px 14px;border-radius:20px;border:2px dashed #ddd;background:none;color:#aaa;font-size:13px;cursor:pointer;font-family:inherit">+ New</button>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button onclick="editTemplate('${state.activeTemplateId}')" class="btn-ghost" style="font-size:12px">Edit name</button>
-        ${state.templates.length>1?`<button onclick="deleteTemplate('${state.activeTemplateId}')" class="btn-ghost btn-danger" style="font-size:12px">Delete</button>`:""}
-        <button onclick="saveTodayToTemplate()" class="btn-ghost" style="font-size:12px;color:#6B7FD7">Save today to template</button>
-      </div>
+// ---- TIMELINE VIEW ----
+function renderTimeline(){
+  const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
+  if(!sorted.length) return `<div class="empty-msg">No bricks yet.</div>`;
+  const minStart=timeToMins(sorted[0].start);
+  const maxEnd=Math.max(...sorted.map(b=>timeToMins(b.end)));
+  const totalMins=maxEnd-minStart;
+  const PX_PER_MIN=2.2;
+  const totalHeight=totalMins*PX_PER_MIN;
+
+  // Build hour labels
+  const startHour=Math.floor(minStart/60);
+  const endHour=Math.ceil(maxEnd/60);
+  let hourLabels="";
+  for(let h=startHour;h<=endHour;h++){
+    const top=((h*60)-minStart)*PX_PER_MIN;
+    const label=h<12?"12"===String(h)?"12am":`${h}am`:h===12?"12pm":`${h-12}pm`;
+    hourLabels+=`<div style="position:absolute;top:${top}px;right:0;font-size:10px;color:#bbb;line-height:1;transform:translateY(-50%)">${label}</div>`;
+    // grid line
+  }
+
+  const bricks=sorted.map(brick=>{
+    const c=cat(brick.category);
+    const top=(timeToMins(brick.start)-minStart)*PX_PER_MIN;
+    const height=(timeToMins(brick.end)-timeToMins(brick.start))*PX_PER_MIN;
+    const showTime=height>24;
+    const showLabel=height>14;
+    return `<div class="timeline-brick" style="top:${top}px;height:${height-2}px;background:${c.light};border-left-color:${c.color}" onclick="state.editingBrickId='${brick.id}';state.brickView='list';persist('brickView');render()">
+      ${showLabel?`<div class="timeline-brick-label" style="color:${c.color}">${brick.label}</div>`:""}
+      ${showTime?`<div class="timeline-brick-time" style="color:${c.color}">${brick.start}–${brick.end}</div>`:""}
     </div>`;
-  const rows = sorted.map((brick,idx)=>{
-    const c = cat(brick.category);
-    if (state.editingBrickId===brick.id) {
+  }).join("");
+
+  return `<div class="timeline-wrap">
+    <div style="width:44px;flex-shrink:0;position:relative;height:${totalHeight}px">${hourLabels}</div>
+    <div style="flex:1;position:relative;height:${totalHeight}px;border-left:1px solid #f0f0f0;margin-left:4px">
+      ${bricks}
+    </div>
+  </div>`;
+}
+
+// ---- BRICKS ----
+function renderBricks(){
+  const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
+  const legend=CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:5px;font-size:12px"><div style="width:10px;height:10px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
+
+  const templateBar=`<div style="margin-bottom:20px">
+    <div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Today's Template</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+      ${state.templates.map(t=>`<button onclick="loadTemplate('${t.id}')" style="padding:8px 14px;border-radius:20px;border:2px solid ${state.activeTemplateId===t.id?"#6B7FD7":"#eee"};background:${state.activeTemplateId===t.id?"#EEF0FB":"#fafafa"};color:${state.activeTemplateId===t.id?"#6B7FD7":"#666"};font-size:13px;font-weight:${state.activeTemplateId===t.id?700:400};cursor:pointer;font-family:inherit">${t.name}</button>`).join("")}
+      <button onclick="state.showAddTemplate=true;render()" style="padding:8px 14px;border-radius:20px;border:2px dashed #ddd;background:none;color:#aaa;font-size:13px;cursor:pointer;font-family:inherit">+ New</button>
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button onclick="editTemplate('${state.activeTemplateId}')" class="btn-ghost" style="font-size:12px">Rename</button>
+      ${state.templates.length>1?`<button onclick="deleteTemplate('${state.activeTemplateId}')" class="btn-ghost btn-danger" style="font-size:12px">Delete</button>`:""}
+      <button onclick="saveTodayToTemplate()" class="btn-ghost" style="font-size:12px;color:#6B7FD7">Save today to template</button>
+    </div>
+  </div>`;
+
+  const viewToggle=`<div class="view-toggle">
+    <button class="pill-toggle" style="background:${state.brickView==="list"?"#222":"#eee"};color:${state.brickView==="list"?"#fff":"#555"}" onclick="state.brickView='list';persist('brickView');render()">List</button>
+    <button class="pill-toggle" style="background:${state.brickView==="timeline"?"#222":"#eee"};color:${state.brickView==="timeline"?"#fff":"#555"}" onclick="state.brickView='timeline';persist('brickView');render()">Timeline</button>
+    <button class="btn-primary btn-small" style="background:#1a1a1a;margin-left:auto" onclick="state.showAddBrick=true;render()">+ Add</button>
+  </div>`;
+
+  const listRows=sorted.map((brick,idx)=>{
+    const c=cat(brick.category);
+    if(state.editingBrickId===brick.id){
       return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
         <div style="display:flex;flex-direction:column;gap:2px">
           <button class="arrow-btn" onclick="moveBrick('${brick.id}',-1)">▲</button>
           <button class="arrow-btn" onclick="moveBrick('${brick.id}',1)">▼</button>
         </div>
-        <div class="brick-card" style="background:${c.light};border-left-color:${c.color};flex-direction:column;align-items:stretch;gap:8px">
+        <div style="flex:1;border-radius:10px;padding:12px 14px;background:${c.light};border-left:4px solid ${c.color};display:flex;flex-direction:column;gap:8px">
           <input value="${brick.label}" onchange="updateBrickField('${brick.id}','label',this.value)" />
           <div class="flex-row">
             <input type="time" value="${brick.start}" onchange="updateBrickField('${brick.id}','start',this.value)" />
@@ -315,13 +376,17 @@ function renderBricks() {
         </div>
       </div>`;
     }
+    const mins=timeToMins(brick.end)-timeToMins(brick.start);
     return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
       <div style="display:flex;flex-direction:column;gap:2px">
         <button class="arrow-btn" onclick="moveBrick('${brick.id}',-1)">▲</button>
         <button class="arrow-btn" onclick="moveBrick('${brick.id}',1)">▼</button>
       </div>
-      <div class="brick-card" style="background:${c.light};border-left-color:${c.color}">
-        <div><div class="brick-label">${brick.label}</div><div class="brick-time">${brick.start} – ${brick.end}</div></div>
+      <div style="flex:1;border-radius:10px;padding:12px 14px;background:${c.light};border-left:4px solid ${c.color};display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:600;font-size:14px">${brick.label}</div>
+          <div style="font-size:12px;color:#888">${brick.start} – ${brick.end} <span style="color:#bbb">(${mins}m)</span></div>
+        </div>
         <div class="flex-row">
           <button class="btn-ghost" onclick="state.editingBrickId='${brick.id}';render()">Edit</button>
           <button class="btn-ghost btn-danger" onclick="deleteTodayBrick('${brick.id}')">✕</button>
@@ -329,58 +394,57 @@ function renderBricks() {
       </div>
     </div>`;
   }).join("");
-  return `${templateBar}
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <span style="color:#888;font-size:13px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</span>
-      <button class="btn-primary btn-small" style="background:#1a1a1a" onclick="state.showAddBrick=true;render()">+ Add Brick</button>
-    </div>
+
+  const dateBar=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+    <span style="color:#888;font-size:13px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</span>
+  </div>`;
+
+  const restartBtn=`<button class="btn-restart" onclick="doRestart()">↺ Fresh Start — Reset Today</button>`;
+
+  return `${templateBar}${viewToggle}${dateBar}
     <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">${legend}</div>
-    ${rows}`;
+    ${state.brickView==="timeline"?renderTimeline():listRows}
+    ${restartBtn}`;
 }
 
-function loadTemplate(id) {
-  const t = state.templates.find(t=>t.id===id);
-  if (!t) return;
+function loadTemplate(id){
+  const t=state.templates.find(t=>t.id===id);
+  if(!t) return;
   state.activeTemplateId=id;
   state.todayBricks=deepCopy(t.bricks);
-  persist("activeTemplateId"); persist("todayBricks");
-  render();
+  persist("activeTemplateId"); persist("todayBricks"); render();
 }
 
-function saveTodayToTemplate() {
-  state.templates = state.templates.map(t=>t.id===state.activeTemplateId?{...t,bricks:deepCopy(state.todayBricks)}:t);
-  persist("templates");
-  alert("Today's bricks saved to template.");
+function saveTodayToTemplate(){
+  state.templates=state.templates.map(t=>t.id===state.activeTemplateId?{...t,bricks:deepCopy(state.todayBricks)}:t);
+  persist("templates"); alert("Saved to template.");
 }
 
-function moveBrick(id,dir) {
-  const sorted=[...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
+function moveBrick(id,dir){
+  const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
   const idx=sorted.findIndex(b=>b.id===id), target=idx+dir;
   if(target<0||target>=sorted.length) return;
-  const t1=sorted[idx].start, e1=sorted[idx].end;
+  const t1=sorted[idx].start,e1=sorted[idx].end;
   sorted[idx]={...sorted[idx],start:sorted[target].start,end:sorted[target].end};
   sorted[target]={...sorted[target],start:t1,end:e1};
   state.todayBricks=sorted; persist("todayBricks"); render();
 }
 
-function updateBrickField(id,field,val) {
+function updateBrickField(id,field,val){
   state.todayBricks=state.todayBricks.map(b=>b.id===id?{...b,[field]:val}:b);
   persist("todayBricks");
 }
 
-function deleteTodayBrick(id) {
-  state.todayBricks=state.todayBricks.filter(b=>b.id!==id);
-  persist("todayBricks"); render();
-}
+function deleteTodayBrick(id){ state.todayBricks=state.todayBricks.filter(b=>b.id!==id); persist("todayBricks"); render(); }
 
-function editTemplate(id) {
+function editTemplate(id){
   state.editingTemplateId=id;
   const t=state.templates.find(t=>t.id===id);
   state.newTemplateName=t?t.name:"";
   state.showAddTemplate=true; render();
 }
 
-function deleteTemplate(id) {
+function deleteTemplate(id){
   if(state.templates.length<=1) return;
   state.templates=state.templates.filter(t=>t.id!==id);
   state.activeTemplateId=state.templates[0].id;
@@ -388,13 +452,13 @@ function deleteTemplate(id) {
   persist("templates"); persist("activeTemplateId"); persist("todayBricks"); render();
 }
 
-function renderAddTemplateModal() {
+function renderAddTemplateModal(){
   const isEdit=!!state.editingTemplateId;
   return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddTemplate=false;state.editingTemplateId=null;render()}">
     <div class="modal-box">
       <div class="modal-title">${isEdit?"Rename Template":"New Template"}</div>
       <div class="flex-col">
-        <input id="tname" placeholder="Template name (e.g. MWF, Travel Day)" value="${state.newTemplateName}" oninput="state.newTemplateName=this.value" />
+        <input id="tname" placeholder="e.g. MWF, Travel Day, Light Day" value="${state.newTemplateName}" oninput="state.newTemplateName=this.value" />
         ${!isEdit?`<div class="sub-text" style="margin:0">Copies today's bricks as the starting point.</div>`:""}
         <div class="flex-row">
           <button class="btn-primary" onclick="saveTemplate()">${isEdit?"Save":"Create"}</button>
@@ -405,13 +469,14 @@ function renderAddTemplateModal() {
   </div>`;
 }
 
-function saveTemplate() {
-  const name=(document.getElementById("tname")||{}).value||state.newTemplateName;
-  if(!name.trim()) return;
-  if(state.editingTemplateId) {
-    state.templates=state.templates.map(t=>t.id===state.editingTemplateId?{...t,name:name.trim()}:t);
+function saveTemplate(){
+  const el=document.getElementById("tname");
+  const name=(el?el.value:state.newTemplateName).trim();
+  if(!name) return;
+  if(state.editingTemplateId){
+    state.templates=state.templates.map(t=>t.id===state.editingTemplateId?{...t,name}:t);
   } else {
-    const newT={id:uid(),name:name.trim(),bricks:deepCopy(state.todayBricks)};
+    const newT={id:uid(),name,bricks:deepCopy(state.todayBricks)};
     state.templates.push(newT);
     state.activeTemplateId=newT.id;
   }
@@ -419,7 +484,7 @@ function saveTemplate() {
   persist("templates"); persist("activeTemplateId"); render();
 }
 
-function renderAddBrickModal() {
+function renderAddBrickModal(){
   const nb=state.newBrick;
   return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddBrick=false;render()}">
     <div class="modal-box">
@@ -442,7 +507,7 @@ function renderAddBrickModal() {
   </div>`;
 }
 
-function addBrick() {
+function addBrick(){
   const el=document.getElementById("nb-label");
   const label=(el?el.value:state.newBrick.label).trim();
   if(!label) return;
@@ -452,12 +517,11 @@ function addBrick() {
 }
 
 // INTENTIONS
-function renderIntentions() {
-  const rows=state.intentions.map(i=>`
-    <div class="list-row">
-      <span style="flex:1;font-size:14px;color:#333">${i.text}</span>
-      <button class="btn-ghost btn-danger" onclick="deleteIntention('${i.id}')">✕</button>
-    </div>`).join("");
+function renderIntentions(){
+  const rows=state.intentions.map(i=>`<div class="list-row">
+    <span style="flex:1;font-size:14px;color:#333">${i.text}</span>
+    <button class="btn-ghost btn-danger" onclick="deleteIntention('${i.id}')">✕</button>
+  </div>`).join("");
   return `<div class="section-head">Intentions</div>
     <div class="sub-text">What you feel called to bring into form. No timeline. From the heart.</div>
     ${rows||'<div class="empty-msg">No intentions yet.</div>'}
@@ -467,224 +531,172 @@ function renderIntentions() {
     </div>`;
 }
 
-function addIntention() {
-  const el=document.getElementById("new-intention");
-  const t=(el?el.value:state.newIntention).trim();
-  if(!t) return;
-  state.intentions.push({id:uid(),text:t});
-  state.newIntention=""; persist("intentions"); render();
-}
-
-function deleteIntention(id) { state.intentions=state.intentions.filter(i=>i.id!==id); persist("intentions"); render(); }
+function addIntention(){ const el=document.getElementById("new-intention"); const t=(el?el.value:state.newIntention).trim(); if(!t) return; state.intentions.push({id:uid(),text:t}); state.newIntention=""; persist("intentions"); render(); }
+function deleteIntention(id){ state.intentions=state.intentions.filter(i=>i.id!==id); persist("intentions"); render(); }
 
 // GOALS
-function renderGoals() {
+function renderGoals(){
   const sections=CATEGORIES.map(c=>{
     const cg=state.goals.filter(g=>g.category===c.id);
-    const rows=cg.map(g=>{
-      const ms=state.milestones.filter(m=>m.goalId===g.id);
-      const done=ms.filter(m=>m.done).length;
+    const rows=cg.map(g=>{ const ms=state.milestones.filter(m=>m.goalId===g.id); const done=ms.filter(m=>m.done).length;
       return `<div class="list-row" style="margin-left:16px;margin-bottom:6px">
         <span style="flex:1;font-size:14px;color:#333">${g.text}</span>
         ${ms.length?`<span class="goal-count">${done}/${ms.length}</span>`:""}
         <button class="btn-ghost btn-danger" onclick="deleteGoal('${g.id}')">✕</button>
       </div>`;
     }).join("");
-    return `<div style="margin-bottom:18px">
-      <div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>
-      ${rows||`<div class="empty-msg">No goals yet.</div>`}
-    </div>`;
+    return `<div style="margin-bottom:18px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>${rows||`<div class="empty-msg">No goals yet.</div>`}</div>`;
   }).join("");
-  return `<div class="section-head">Goals</div>
-    <div class="sub-text">No timeline. Add milestones in the Milestones tab.</div>
-    ${sections}
+  return `<div class="section-head">Goals</div><div class="sub-text">No timeline. Add milestones in the Milestones tab.</div>${sections}
     <hr class="section-divider"/>
     <div class="flex-col">
       <textarea id="new-goal-text" rows="2" placeholder="New goal..." onchange="state.newGoal.text=this.value">${state.newGoal.text}</textarea>
-      <select onchange="state.newGoal.category=this.value">
-        ${CATEGORIES.map(c=>`<option value="${c.id}"${state.newGoal.category===c.id?" selected":""}>${c.label}</option>`).join("")}
-      </select>
+      <select onchange="state.newGoal.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newGoal.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select>
       <button class="btn-primary" onclick="addGoal()">Add Goal</button>
     </div>`;
 }
 
-function addGoal() {
-  const el=document.getElementById("new-goal-text");
-  const t=(el?el.value:state.newGoal.text).trim();
-  if(!t) return;
-  state.goals.push({id:uid(),text:t,category:state.newGoal.category});
-  state.newGoal={text:"",category:"spiritual"}; persist("goals"); render();
-}
-
-function deleteGoal(id) { state.goals=state.goals.filter(g=>g.id!==id); persist("goals"); render(); }
+function addGoal(){ const el=document.getElementById("new-goal-text"); const t=(el?el.value:state.newGoal.text).trim(); if(!t) return; state.goals.push({id:uid(),text:t,category:state.newGoal.category}); state.newGoal={text:"",category:"spiritual"}; persist("goals"); render(); }
+function deleteGoal(id){ state.goals=state.goals.filter(g=>g.id!==id); persist("goals"); render(); }
 
 // MILESTONES
-function renderMilestones() {
+function renderMilestones(){
   const total=state.milestones.length, done=state.milestones.filter(m=>m.done).length;
   const pct=total>0?Math.round((done/total)*100):0;
-  const circles=CATEGORIES.map(c=>{
-    const cm=state.milestones.filter(m=>m.category===c.id);
-    if(!cm.length) return "";
-    const cd=cm.filter(m=>m.done).length;
-    return `<div class="cat-circle" style="background:${c.light};border-color:${c.color};color:${c.color}">${cd}/${cm.length}</div>`;
-  }).join("");
-  const sections=CATEGORIES.map(c=>{
-    const cm=state.milestones.filter(m=>m.category===c.id);
-    const cdone=cm.filter(m=>m.done).length;
-    const rows=cm.map(m=>{
-      const g=state.goals.find(g=>g.id===m.goalId);
+  const circles=CATEGORIES.map(c=>{ const cm=state.milestones.filter(m=>m.category===c.id); if(!cm.length) return ""; const cd=cm.filter(m=>m.done).length; return `<div class="cat-circle" style="background:${c.light};border-color:${c.color};color:${c.color}">${cd}/${cm.length}</div>`; }).join("");
+  const sections=CATEGORIES.map(c=>{ const cm=state.milestones.filter(m=>m.category===c.id); const cdone=cm.filter(m=>m.done).length;
+    const rows=cm.map(m=>{ const g=state.goals.find(g=>g.id===m.goalId);
       return `<div class="milestone-card" style="background:${m.done?c.light:"#fafafa"};border-color:${m.done?c.color:"#eee"}">
         <button class="check-circle" style="background:${m.done?c.color:"#ddd"}" onclick="toggleMilestone('${m.id}')">${m.done?"✓":""}</button>
-        <div style="flex:1">
-          <div style="font-size:13px;color:${m.done?"#888":"#222"};text-decoration:${m.done?"line-through":"none"};font-weight:${m.done?400:500}">${m.text}</div>
-          ${g?`<div class="linked-goal">→ ${g.text}</div>`:""}
-        </div>
+        <div style="flex:1"><div style="font-size:13px;color:${m.done?"#888":"#222"};text-decoration:${m.done?"line-through":"none"};font-weight:${m.done?400:500}">${m.text}</div>${g?`<div class="linked-goal">→ ${g.text}</div>`:""}</div>
         <button class="btn-ghost btn-danger" onclick="deleteMilestone('${m.id}')">✕</button>
       </div>`;
     }).join("");
-    return `<div style="margin-bottom:22px">
-      <div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span><span class="goal-count">${cdone}/${cm.length}</span></div>
-      ${rows||`<div class="empty-msg">No milestones this month.</div>`}
-    </div>`;
+    return `<div style="margin-bottom:22px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span><span class="goal-count">${cdone}/${cm.length}</span></div>${rows||`<div class="empty-msg">No milestones this month.</div>`}</div>`;
   }).join("");
-  const goalOptions=state.goals.filter(g=>g.category===state.newMilestone.category)
-    .map(g=>`<option value="${g.id}"${state.newMilestone.goalId===g.id?" selected":""}>${g.text}</option>`).join("");
+  const goalOptions=state.goals.filter(g=>g.category===state.newMilestone.category).map(g=>`<option value="${g.id}"${state.newMilestone.goalId===g.id?" selected":""}>${g.text}</option>`).join("");
   return `<div class="progress-box">
       <div style="font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${currentMonth()}</div>
-      <div style="display:flex;justify-content:space-between;align-items:flex-end">
-        <div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} complete</div></div>
-        <div class="cat-circles">${circles}</div>
-      </div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
-    </div>
-    ${sections}
+      <div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} complete</div></div><div class="cat-circles">${circles}</div></div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:#6B7FD7"></div></div>
+    </div>${sections}
     <hr class="section-divider"/>
     <div class="section-head">Add Milestone</div>
     <div class="flex-col">
       <textarea id="new-ms-text" rows="2" placeholder="This month I will..." onchange="state.newMilestone.text=this.value">${state.newMilestone.text}</textarea>
-      <select onchange="state.newMilestone.category=this.value;state.newMilestone.goalId='';render()">
-        ${CATEGORIES.map(c=>`<option value="${c.id}"${state.newMilestone.category===c.id?" selected":""}>${c.label}</option>`).join("")}
-      </select>
-      <select onchange="state.newMilestone.goalId=this.value">
-        <option value="">Link to goal (optional)</option>
-        ${goalOptions}
-      </select>
+      <select onchange="state.newMilestone.category=this.value;state.newMilestone.goalId='';render()">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newMilestone.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select>
+      <select onchange="state.newMilestone.goalId=this.value"><option value="">Link to goal (optional)</option>${goalOptions}</select>
       <button class="btn-primary" onclick="addMilestone()">Add Milestone</button>
     </div>`;
 }
 
-function toggleMilestone(id) { state.milestones=state.milestones.map(m=>m.id===id?{...m,done:!m.done}:m); persist("milestones"); render(); }
-function deleteMilestone(id) { state.milestones=state.milestones.filter(m=>m.id!==id); persist("milestones"); render(); }
-function addMilestone() {
-  const el=document.getElementById("new-ms-text");
-  const t=(el?el.value:state.newMilestone.text).trim();
-  if(!t) return;
-  state.milestones.push({id:uid(),text:t,category:state.newMilestone.category,goalId:state.newMilestone.goalId,done:false,month:currentMonth()});
-  state.newMilestone={text:"",category:"spiritual",goalId:""}; persist("milestones"); render();
-}
+function toggleMilestone(id){ state.milestones=state.milestones.map(m=>m.id===id?{...m,done:!m.done}:m); persist("milestones"); render(); }
+function deleteMilestone(id){ state.milestones=state.milestones.filter(m=>m.id!==id); persist("milestones"); render(); }
+function addMilestone(){ const el=document.getElementById("new-ms-text"); const t=(el?el.value:state.newMilestone.text).trim(); if(!t) return; state.milestones.push({id:uid(),text:t,category:state.newMilestone.category,goalId:state.newMilestone.goalId,done:false,month:currentMonth()}); state.newMilestone={text:"",category:"spiritual",goalId:""}; persist("milestones"); render(); }
 
 // LISTS
-function renderLists() {
+function renderLists(){
   const projects=[...new Set(state.lists.map(l=>l.project).filter(Boolean))];
   const completedCount=state.lists.filter(l=>l.done).length;
   let body="";
-  if(state.listView==="category") {
-    body=CATEGORIES.map(c=>{
-      const items=state.lists.filter(l=>l.category===c.id);
-      const rows=items.map(item=>`
-        <div class="list-row" style="margin-left:16px">
-          <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
-          <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
-          ${item.project?`<span class="tag-pill">${item.project}</span>`:""}
-          <button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button>
-        </div>`).join("");
-      return `<div style="margin-bottom:18px">
-        <div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>
-        ${rows||`<div class="empty-msg">Nothing here yet.</div>`}
-      </div>`;
+  if(state.listView==="category"){
+    body=CATEGORIES.map(c=>{ const items=state.lists.filter(l=>l.category===c.id);
+      const rows=items.map(item=>`<div class="list-row" style="margin-left:16px">
+        <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
+        <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
+        ${item.project?`<span class="tag-pill">${item.project}</span>`:""}
+        <button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button>
+      </div>`).join("");
+      return `<div style="margin-bottom:18px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>${rows||`<div class="empty-msg">Nothing here yet.</div>`}</div>`;
     }).join("");
   } else {
-    const projSections=projects.map(proj=>{
-      const items=state.lists.filter(l=>l.project===proj);
-      const rows=items.map(item=>{
-        const c=cat(item.category);
-        return `<div class="list-row" style="border-left:3px solid ${c.color};padding-left:10px">
-          <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
-          <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
-          <button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button>
-        </div>`;
-      }).join("");
-      return `<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#444;margin-bottom:8px">${proj}</div>${rows}</div>`;
-    }).join("");
-    const untagged=state.lists.filter(l=>!l.project);
-    const untaggedRows=untagged.map(item=>`
-      <div class="list-row">
+    const ps=projects.map(proj=>{ const items=state.lists.filter(l=>l.project===proj);
+      const rows=items.map(item=>{ const c=cat(item.category); return `<div class="list-row" style="border-left:3px solid ${c.color};padding-left:10px">
         <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
         <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
         <button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button>
-      </div>`).join("");
-    body=projSections+(untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${untaggedRows}</div>`:"");
+      </div>`; }).join("");
+      return `<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#444;margin-bottom:8px">${proj}</div>${rows}</div>`;
+    }).join("");
+    const untagged=state.lists.filter(l=>!l.project);
+    const ur=untagged.map(item=>`<div class="list-row">
+      <button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button>
+      <span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>
+      <button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button>
+    </div>`).join("");
+    body=ps+(untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${ur}</div>`:"");
     if(!body.trim()) body=`<div class="empty-msg" style="margin-bottom:20px">No tasks yet.</div>`;
   }
   const archiveDates=Object.keys(state.listArchive).sort().reverse().slice(0,5);
-  const archiveSection=archiveDates.length?`
-    <hr class="section-divider"/>
-    <div class="section-head">Archive</div>
-    <div class="sub-text">Completed tasks from previous days.</div>
-    ${archiveDates.map(d=>`<div style="margin-bottom:14px">
-      <div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>
-      ${state.listArchive[d].map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}
-    </div>`).join("")}`:"";
+  const archiveSection=archiveDates.length?`<hr class="section-divider"/><div class="section-head">Archive</div><div class="sub-text">Completed tasks from previous days.</div>${archiveDates.map(d=>`<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>${state.listArchive[d].map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}</div>`).join("")}`:"";
   return `<div class="flex-row" style="margin-bottom:20px">
       <button class="pill-toggle" style="background:${state.listView==="category"?"#222":"#eee"};color:${state.listView==="category"?"#fff":"#555"}" onclick="state.listView='category';render()">By Category</button>
       <button class="pill-toggle" style="background:${state.listView==="project"?"#222":"#eee"};color:${state.listView==="project"?"#fff":"#555"}" onclick="state.listView='project';render()">By Project</button>
-    </div>
-    ${body}
+    </div>${body}
     ${completedCount>0?`<button class="btn-primary full" style="background:#4BAF7C;margin-bottom:24px" onclick="archiveCompletedLists()">Archive ${completedCount} completed task${completedCount!==1?"s":""}</button>`:""}
     <hr class="section-divider"/>
     <div class="section-head">Add to List</div>
     <div class="flex-col">
       <textarea id="new-item-text" rows="2" placeholder="Task or note..." onchange="state.newItem.text=this.value">${state.newItem.text}</textarea>
-      <select onchange="state.newItem.category=this.value">
-        ${CATEGORIES.map(c=>`<option value="${c.id}"${state.newItem.category===c.id?" selected":""}>${c.label}</option>`).join("")}
-      </select>
+      <select onchange="state.newItem.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newItem.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select>
       <input id="new-item-project" placeholder="Project (optional)" value="${state.newItem.project}" onchange="state.newItem.project=this.value" />
       <button class="btn-primary" onclick="addList()">Add to List</button>
-    </div>
-    ${archiveSection}`;
+    </div>${archiveSection}`;
 }
 
-function toggleList(id) { state.lists=state.lists.map(l=>l.id===id?{...l,done:!l.done}:l); persist("lists"); render(); }
-function deleteList(id) { state.lists=state.lists.filter(l=>l.id!==id); persist("lists"); render(); }
-function addList() {
-  const el=document.getElementById("new-item-text");
-  const elp=document.getElementById("new-item-project");
-  const t=(el?el.value:state.newItem.text).trim();
-  const p=(elp?elp.value:state.newItem.project).trim();
-  if(!t) return;
-  state.lists.push({id:uid(),text:t,category:state.newItem.category,project:p,done:false,date:todayStr()});
-  state.newItem={text:"",category:"spiritual",project:""}; persist("lists"); render();
-}
+function toggleList(id){ state.lists=state.lists.map(l=>l.id===id?{...l,done:!l.done}:l); persist("lists"); render(); }
+function deleteList(id){ state.lists=state.lists.filter(l=>l.id!==id); persist("lists"); render(); }
+function addList(){ const el=document.getElementById("new-item-text"); const elp=document.getElementById("new-item-project"); const t=(el?el.value:state.newItem.text).trim(); const p=(elp?elp.value:state.newItem.project).trim(); if(!t) return; state.lists.push({id:uid(),text:t,category:state.newItem.category,project:p,done:false,date:todayStr()}); state.newItem={text:"",category:"spiritual",project:""}; persist("lists"); render(); }
 
 // CHECK-IN
-function renderCheckin() {
-  const sorted=[...state.todayBricks].sort((a,b)=>a.start.localeCompare(b.start));
+function renderCheckin(){
+  const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
   const total=sorted.length, done=state.todayCompleted.length;
   const pct=total>0?Math.round((done/total)*100):0;
+
+  // category balance bars
+  const catBars=CATEGORIES.map(c=>{
+    const cBricks=sorted.filter(b=>b.category===c.id);
+    const cDone=cBricks.filter(b=>state.todayCompleted.includes(b.id)).length;
+    if(!cBricks.length) return "";
+    const cpct=Math.round((cDone/cBricks.length)*100);
+    return `<div style="margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+        <span style="color:${c.color};font-weight:600">${c.label}</span>
+        <span style="color:#aaa">${cDone}/${cBricks.length}</span>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${cpct}%;background:${c.color}"></div></div>
+    </div>`;
+  }).join("");
+
   const brickRows=sorted.map(brick=>{
     const c=cat(brick.category);
     const isDone=state.todayCompleted.includes(brick.id);
+    const mins=timeToMins(brick.end)-timeToMins(brick.start);
     return `<div class="checkin-brick" style="background:${isDone?c.light:"#fafafa"};border-color:${isDone?c.color:"#eee"}" onclick="toggleCheckin('${brick.id}')">
       <div class="checkin-box" style="background:${isDone?c.color:"#ddd"}">${isDone?"✓":""}</div>
       <span style="font-size:13px;color:${isDone?"#222":"#888"};font-weight:${isDone?600:400};flex:1">${brick.label}</span>
-      <span style="font-size:11px;color:#bbb">${brick.start}</span>
+      <span style="font-size:11px;color:#bbb">${brick.start} · ${mins}m</span>
     </div>`;
   }).join("");
+
+  // List review
+  const pendingLists=state.lists.filter(l=>!l.done);
+  const listReviewRows=state.lists.map(item=>{
+    const c=cat(item.category);
+    const isChecked=state.todayListsDone.includes(item.id)||item.done;
+    return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:${isChecked?c.light:"#fafafa"};border:1px solid ${isChecked?c.color:"#eee"};margin-bottom:6px;cursor:pointer" onclick="toggleListCheckin('${item.id}')">
+      <div style="width:20px;height:20px;border-radius:4px;background:${isChecked?c.color:"#ddd"};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff">${isChecked?"✓":""}</div>
+      <span style="flex:1;font-size:13px;color:${isChecked?"#888":"#333"};text-decoration:${isChecked?"line-through":"none"}">${item.text}</span>
+      ${item.project?`<span class="tag-pill">${item.project}</span>`:""}
+      <div style="width:8px;height:8px;border-radius:2px;background:${c.color};flex-shrink:0"></div>
+    </div>`;
+  }).join("");
+
   const saturday=isSaturday();
-  const weeklySection=saturday?`
-    <hr class="divider"/>
+  const weeklySection=saturday?`<hr class="divider"/>
     <div class="section-head">Saturday Weekly Review</div>
-    <div class="sub-text">Review the week. Adjust the bricks. Sunday is rest.</div>
+    <div class="sub-text">Review the week. Adjust bricks. Sunday is rest.</div>
     <label>Wins this week</label>
     <textarea rows="3" onchange="state.weeklyWins=this.value" placeholder="What worked? What moved?">${state.weeklyWins}</textarea>
     <label>Challenges</label>
@@ -692,24 +704,57 @@ function renderCheckin() {
     <label>Adjustments for next week</label>
     <textarea rows="3" onchange="state.weeklyAdjustments=this.value" placeholder="What bricks need to move?">${state.weeklyAdjustments}</textarea>
     <button class="btn-primary full" style="background:#8B5DB8;margin-top:12px" onclick="saveWeekly();this.textContent='Saved ✓'">Save Weekly Review</button>`:"";
+
   return `<div class="progress-box">
-      <div style="font-size:13px;color:#888;margin-bottom:6px">Today's completion</div>
-      <div class="progress-pct">${pct}%</div>
-      <div class="progress-sub">${done} of ${total} bricks</div>
-      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%"></div></div>
+      <div style="font-size:13px;color:#888;margin-bottom:8px">Today's completion</div>
+      <div style="display:flex;align-items:flex-end;gap:16px;margin-bottom:12px">
+        <div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} bricks</div></div>
+        <div style="flex:1">${catBars}</div>
+      </div>
+      <div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:#6B7FD7"></div></div>
     </div>
-    <div class="section-head">Which bricks did you complete today?</div>
+
+    <div class="section-head">Bricks — what got done?</div>
     ${brickRows}
+
+    <hr class="section-divider"/>
+    <div class="section-head">Lists — what moved today?</div>
+    <div class="sub-text">Tap what you completed. Archive when done.</div>
+    ${listReviewRows||'<div class="empty-msg">No active tasks.</div>'}
+    ${state.lists.some(l=>l.done||state.todayListsDone.includes(l.id))?`<button class="btn-primary full" style="background:#4BAF7C;margin-top:8px;margin-bottom:4px" onclick="archiveCheckinCompleted()">Archive completed tasks</button>`:""}
+
     <label style="margin-top:20px">End of day note</label>
     <textarea rows="4" onchange="state.todayNote=this.value" placeholder="How did today go? What needs to move tomorrow?">${state.todayNote}</textarea>
     <button class="btn-primary full" style="margin-top:12px" onclick="saveCheckin();this.textContent='Saved ✓'">Save Check-In</button>
     ${weeklySection}`;
 }
 
-function toggleCheckin(id) {
+function toggleCheckin(id){
   if(state.todayCompleted.includes(id)) state.todayCompleted=state.todayCompleted.filter(i=>i!==id);
   else state.todayCompleted.push(id);
   render();
+}
+
+function toggleListCheckin(id){
+  if(state.todayListsDone.includes(id)){
+    state.todayListsDone=state.todayListsDone.filter(i=>i!==id);
+    state.lists=state.lists.map(l=>l.id===id?{...l,done:false}:l);
+  } else {
+    state.todayListsDone.push(id);
+    state.lists=state.lists.map(l=>l.id===id?{...l,done:true}:l);
+  }
+  persist("lists"); render();
+}
+
+function archiveCheckinCompleted(){
+  const completed=state.lists.filter(l=>l.done);
+  if(!completed.length) return;
+  const dateKey=todayStr();
+  if(!state.listArchive[dateKey]) state.listArchive[dateKey]=[];
+  state.listArchive[dateKey].push(...completed);
+  state.lists=state.lists.filter(l=>!l.done);
+  state.todayListsDone=state.todayListsDone.filter(id=>state.lists.find(l=>l.id===id));
+  persist("lists"); persist("listArchive"); render();
 }
 
 loadState();
