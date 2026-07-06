@@ -37,7 +37,6 @@
     .btn-danger { color: #d45f6b; }
     .btn-small { padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; }
     .btn-restart { padding: 10px 16px; border-radius: 8px; background: #fff; color: #888; border: 1.5px solid #ddd; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; width: 100%; margin-top: 12px; }
-    .arrow-btn { background: none; border: 1px solid #eee; border-radius: 4px; cursor: pointer; font-size: 10px; color: #bbb; padding: 3px 6px; line-height: 1; }
     .list-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 6px; }
     .progress-box { background: #f5f5f5; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
     .progress-pct { font-size: 32px; font-weight: 700; }
@@ -63,43 +62,35 @@
     .cat-circle { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; border-width: 2px; border-style: solid; }
     label { font-size: 13px; font-weight: 600; color: #444; display: block; margin-bottom: 6px; margin-top: 14px; }
     label:first-child { margin-top: 0; }
-    .empty-msg { font-size: 12px; color: #ccc; margin-left: 0; margin-bottom: 8px; }
+    .empty-msg { font-size: 12px; color: #ccc; margin-bottom: 8px; }
     .goal-count { font-size: 11px; color: #bbb; margin-left: 4px; }
     .linked-goal { font-size: 11px; color: #bbb; margin-top: 3px; }
     .section-divider { border: none; border-top: 1px solid #eee; margin: 20px 0; }
     .archive-item { padding: 10px 12px; border-radius: 8px; background: #fafafa; margin-bottom: 4px; border-left: 3px solid #ddd; }
-
-    /* TETRIS */
-    .tetris-grid { display: flex; flex-direction: column; gap: 4px; margin-bottom: 16px; }
-    .tetris-stack { display: flex; flex-direction: column; gap: 2px; }
-    .tetris-brick { border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; border-left: 4px solid transparent; transition: opacity 0.15s; user-select: none; }
-    .tetris-brick:active { opacity: 0.8; }
+    .tetris-stack { display: flex; flex-direction: column; gap: 2px; margin-bottom: 4px; }
+    .tetris-brick { border-radius: 8px; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid transparent; user-select: none; -webkit-user-select: none; touch-action: pan-y; position: relative; }
     .tetris-brick.is-top { border-radius: 8px 8px 3px 3px; }
     .tetris-brick.is-mid { border-radius: 3px; }
     .tetris-brick.is-bot { border-radius: 3px 3px 8px 8px; }
     .tetris-brick.is-solo { border-radius: 8px; }
     .tetris-brick.active-timer { box-shadow: 0 0 0 2px #1a1a1a; }
+    .tetris-brick.dragging { opacity: 0.5; transform: scale(1.02); box-shadow: 0 4px 16px rgba(0,0,0,0.2); z-index: 10; }
+    .tetris-brick.drop-target { box-shadow: 0 0 0 2px #6B7FD7; }
     .tetris-label { font-weight: 600; font-size: 13px; }
     .tetris-time { font-size: 11px; opacity: 0.65; margin-top: 2px; }
     .tetris-actions { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
     .tetris-start-btn { padding: 4px 10px; border-radius: 5px; border: 1.5px solid currentColor; background: transparent; font-size: 11px; font-weight: 700; cursor: pointer; font-family: inherit; }
-
-    /* TIMELINE */
     .timeline-wrap { display: flex; gap: 0; margin-bottom: 20px; }
     .timeline-time-col { width: 44px; flex-shrink: 0; position: relative; }
     .timeline-brick-col { flex: 1; position: relative; border-left: 1px solid #f0f0f0; margin-left: 4px; }
     .tl-brick { position: absolute; left: 2px; right: 2px; border-radius: 6px; padding: 4px 8px; overflow: hidden; cursor: pointer; border-left: 3px solid transparent; }
     .tl-brick-label { font-size: 11px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .tl-brick-time { font-size: 10px; opacity: 0.7; }
-
-    /* EDIT LIST */
-    .edit-brick-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
-    .edit-brick-card { flex: 1; border-radius: 10px; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid transparent; }
+    .drag-hint { font-size: 11px; color: #bbb; margin-bottom: 10px; }
   </style>
 </head>
 <body>
 
-<!-- PERSISTENT TIMER BAR -->
 <div id="timer-bar">
   <div style="flex:1;min-width:0">
     <div class="timer-label" id="timer-mode-label">POMODORO</div>
@@ -112,7 +103,6 @@
 
 <div id="app"></div>
 
-<!-- TIMER SETTINGS MODAL -->
 <div id="timer-settings-modal" style="display:none" class="modal-overlay" onclick="if(event.target===this)closeTimerSettings()">
   <div class="modal-box">
     <div class="modal-title">Timer Settings</div>
@@ -145,14 +135,14 @@ const DEFAULT_BRICKS = [
   { id:"b4",  category:"spiritual", label:"Reflection",           start:"06:30", end:"07:00" },
   { id:"b5",  category:"physical",  label:"Gym / Movement",       start:"07:00", end:"07:45" },
   { id:"b6",  category:"physical",  label:"Smoothie + Recovery",  start:"07:45", end:"08:00" },
-  { id:"b7",  category:"financial", label:"COL Client Work",      start:"09:00", end:"09:30" },
-  { id:"b8",  category:"financial", label:"COL Client Work",      start:"09:30", end:"10:00" },
-  { id:"b9",  category:"financial", label:"Ostara",               start:"10:00", end:"10:30" },
-  { id:"b10", category:"financial", label:"Outreach / Pipeline",  start:"10:30", end:"11:00" },
+  { id:"b7",  category:"financial", label:"COL Client Work",      start:"09:00", end:"09:30", project:"MAS" },
+  { id:"b8",  category:"financial", label:"COL Client Work",      start:"09:30", end:"10:00", project:"Hyperballad" },
+  { id:"b9",  category:"financial", label:"Ostara",               start:"10:00", end:"10:30", project:"Ostara" },
+  { id:"b10", category:"financial", label:"Outreach / Pipeline",  start:"10:30", end:"11:00", project:"COL" },
   { id:"b11", category:"family",    label:"Calls / Connection",   start:"11:00", end:"11:30" },
   { id:"b12", category:"financial", label:"Admin / Finance",      start:"11:30", end:"12:00" },
   { id:"b13", category:"creative",  label:"Dispatches / Writing", start:"13:00", end:"13:30" },
-  { id:"b14", category:"creative",  label:"Opt Out / Music",      start:"13:30", end:"14:00" },
+  { id:"b14", category:"creative",  label:"Opt Out / Music",      start:"13:30", end:"14:00", project:"Opt Out" },
   { id:"b15", category:"creative",  label:"Deep Work",            start:"14:00", end:"14:30" },
   { id:"b16", category:"creative",  label:"Deep Work",            start:"14:30", end:"15:00" },
   { id:"b17", category:"family",    label:"Family Time",          start:"16:00", end:"17:00" },
@@ -231,225 +221,305 @@ const SEED_MILESTONES = [
   { id:"m26", category:"creative",  goalId:"g29", text:"Draft outline for book or workshop concept",         done:false, month:"July 2026" },
 ];
 
+const SEED_PROJECTS = [
+  { id:"p1", name:"MAS",        goalId:"g15" },
+  { id:"p2", name:"COL",        goalId:"g15" },
+  { id:"p3", name:"Ostara",     goalId:"g13" },
+  { id:"p4", name:"Opt Out",    goalId:"g24" },
+  { id:"p5", name:"Hyperballad",goalId:"g15" },
+  { id:"p6", name:"Dispatches", goalId:"g26" },
+];
+
 const SEED_LISTS = [
   { id:"l1", text:"MAS prep & research",        category:"financial", project:"MAS",     done:false, date:"2026-07-02" },
   { id:"l2", text:"COL pipeline outreach",      category:"financial", project:"COL",     done:false, date:"2026-07-02" },
   { id:"l3", text:"Call USAA",                  category:"financial", project:"",        done:false, date:"2026-07-02" },
   { id:"l4", text:"Follow up about MOP meeting",category:"family",    project:"",        done:false, date:"2026-07-02" },
-  { id:"l5", text:"Send Dispatches emails",     category:"creative",  project:"",        done:false, date:"2026-07-02" },
+  { id:"l5", text:"Send Dispatches emails",     category:"creative",  project:"Dispatches", done:false, date:"2026-07-02" },
   { id:"l6", text:"Respond to Matthias email",  category:"creative",  project:"Opt Out", done:false, date:"2026-07-02" },
 ];
 
-// ---- TIMER STATE ----
-const timer = {
-  running: false,
-  isBreak: false,
-  isDone: false,
-  workMins: 25,
-  breakMins: 5,
-  secondsLeft: 25 * 60,
-  brickId: null,
-  brickLabel: "No brick selected",
-  interval: null,
-};
+// ---- TIMER ----
+const timer = { running:false, isBreak:false, isDone:false, workMins:25, breakMins:5, secondsLeft:25*60, brickId:null, brickLabel:"No brick selected", interval:null };
 
-function timerTick() {
-  if (!timer.running) return;
+function timerTick(){
+  if(!timer.running) return;
   timer.secondsLeft--;
-  if (timer.secondsLeft <= 0) {
-    timer.running = false;
-    clearInterval(timer.interval);
-    timer.interval = null;
-    if (!timer.isBreak) {
-      timer.isDone = true;
-      timer.isBreak = false;
+  if(timer.secondsLeft<=0){
+    timer.running=false; clearInterval(timer.interval); timer.interval=null;
+    if(!timer.isBreak){
+      timer.isDone=true;
       updateTimerBar();
-      if (typeof Notification !== "undefined" && Notification.permission === "granted") {
-        new Notification("Work session done!", { body: `${timer.brickLabel} — take a break?` });
-      }
-      alert(`Work session done! "${timer.brickLabel}" complete.\nTap OK then choose: Start Break or continue.`);
+      alert(`Work session done! "${timer.brickLabel}" complete.\nStart break or keep going.`);
     } else {
-      timer.isBreak = false;
-      timer.isDone = true;
-      timer.secondsLeft = timer.workMins * 60;
+      timer.isBreak=false; timer.isDone=true; timer.secondsLeft=timer.workMins*60;
       updateTimerBar();
       alert("Break over! Ready for the next brick?");
     }
-    updateTimerBar();
-    return;
+    updateTimerBar(); return;
   }
   updateTimerBar();
 }
 
-function updateTimerBar() {
-  const bar = document.getElementById("timer-bar");
-  const modeLabel = document.getElementById("timer-mode-label");
-  const brickName = document.getElementById("timer-brick-name");
-  const display = document.getElementById("timer-display");
-  const btn = document.getElementById("timer-action-btn");
-  if (!bar) return;
-
-  const mins = Math.floor(timer.secondsLeft / 60);
-  const secs = timer.secondsLeft % 60;
-  display.textContent = `${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
-  brickName.textContent = timer.brickLabel;
-
-  bar.className = timer.isBreak ? "break-mode" : timer.isDone ? "done-mode" : "";
-
-  if (timer.isBreak) {
-    modeLabel.textContent = "BREAK";
-    btn.textContent = timer.running ? "Stop" : "Pause";
-  } else if (timer.isDone) {
-    modeLabel.textContent = "SESSION DONE";
-    btn.textContent = "Start Break";
-  } else {
-    modeLabel.textContent = timer.running ? "FOCUS" : "POMODORO";
-    btn.textContent = timer.running ? "Pause" : (timer.secondsLeft < timer.workMins * 60 ? "Resume" : "Start");
-  }
+function updateTimerBar(){
+  const bar=document.getElementById("timer-bar");
+  if(!bar) return;
+  const mins=Math.floor(timer.secondsLeft/60), secs=timer.secondsLeft%60;
+  document.getElementById("timer-display").textContent=`${String(mins).padStart(2,"0")}:${String(secs).padStart(2,"0")}`;
+  document.getElementById("timer-brick-name").textContent=timer.brickLabel;
+  bar.className=timer.isBreak?"break-mode":timer.isDone?"done-mode":"";
+  const modeLabel=document.getElementById("timer-mode-label");
+  const btn=document.getElementById("timer-action-btn");
+  if(timer.isBreak){ modeLabel.textContent="BREAK"; btn.textContent=timer.running?"Pause":"Resume"; }
+  else if(timer.isDone){ modeLabel.textContent="SESSION DONE"; btn.textContent="Start Break"; }
+  else { modeLabel.textContent=timer.running?"FOCUS":"POMODORO"; btn.textContent=timer.running?"Pause":(timer.secondsLeft<timer.workMins*60?"Resume":"Start"); }
 }
 
-function timerAction() {
-  if (timer.isDone) {
-    // start break
-    timer.isDone = false;
-    timer.isBreak = true;
-    timer.secondsLeft = timer.breakMins * 60;
-    timer.running = true;
-    clearInterval(timer.interval);
-    timer.interval = setInterval(timerTick, 1000);
-    updateTimerBar();
-    return;
+function timerAction(){
+  if(timer.isDone){
+    timer.isDone=false; timer.isBreak=true; timer.secondsLeft=timer.breakMins*60; timer.running=true;
+    clearInterval(timer.interval); timer.interval=setInterval(timerTick,1000);
+    updateTimerBar(); return;
   }
-  if (timer.running) {
-    timer.running = false;
-    clearInterval(timer.interval);
-    timer.interval = null;
-  } else {
-    if (!timer.brickId) { alert("Tap ▶ on a brick to start the timer."); return; }
-    timer.running = true;
-    timer.isDone = false;
-    clearInterval(timer.interval);
-    timer.interval = setInterval(timerTick, 1000);
-    if (typeof Notification !== "undefined" && Notification.permission === "default") Notification.requestPermission();
+  if(timer.running){ timer.running=false; clearInterval(timer.interval); timer.interval=null; }
+  else {
+    if(!timer.brickId){ alert("Tap ▶ on a brick to start the timer."); return; }
+    timer.running=true; timer.isDone=false;
+    clearInterval(timer.interval); timer.interval=setInterval(timerTick,1000);
   }
   updateTimerBar();
 }
 
-function startBrickTimer(brickId, brickLabel) {
-  if (timer.running) { if (!confirm(`Stop current timer for "${timer.brickLabel}" and start "${brickLabel}"?`)) return; }
-  clearInterval(timer.interval);
-  timer.interval = null;
-  timer.running = false;
-  timer.isBreak = false;
-  timer.isDone = false;
-  timer.brickId = brickId;
-  timer.brickLabel = brickLabel;
-  timer.secondsLeft = timer.workMins * 60;
-  timer.running = true;
-  timer.interval = setInterval(timerTick, 1000);
-  if (typeof Notification !== "undefined" && Notification.permission === "default") Notification.requestPermission();
-  updateTimerBar();
-  render();
+function startBrickTimer(brickId,brickLabel){
+  if(timer.running){ if(!confirm(`Stop timer for "${timer.brickLabel}" and start "${brickLabel}"?`)) return; }
+  clearInterval(timer.interval); timer.interval=null;
+  timer.running=false; timer.isBreak=false; timer.isDone=false;
+  timer.brickId=brickId; timer.brickLabel=brickLabel;
+  timer.secondsLeft=timer.workMins*60;
+  timer.running=true; timer.interval=setInterval(timerTick,1000);
+  updateTimerBar(); render();
 }
 
-function showTimerSettings() {
-  document.getElementById("setting-work").value = timer.workMins;
-  document.getElementById("setting-break").value = timer.breakMins;
-  document.getElementById("timer-settings-modal").style.display = "flex";
+function showTimerSettings(){ document.getElementById("setting-work").value=timer.workMins; document.getElementById("setting-break").value=timer.breakMins; document.getElementById("timer-settings-modal").style.display="flex"; }
+function closeTimerSettings(){ document.getElementById("timer-settings-modal").style.display="none"; }
+function applyTimerSettings(){
+  const w=parseInt(document.getElementById("setting-work").value)||25;
+  const b=parseInt(document.getElementById("setting-break").value)||5;
+  timer.workMins=Math.max(1,Math.min(60,w)); timer.breakMins=Math.max(1,Math.min(30,b));
+  if(!timer.running&&!timer.isBreak&&!timer.isDone) timer.secondsLeft=timer.workMins*60;
+  closeTimerSettings(); updateTimerBar();
 }
 
-function closeTimerSettings() { document.getElementById("timer-settings-modal").style.display = "none"; }
+// ---- STATE ----
+const TABS=["Bricks","Intentions","Goals","Milestones","Lists","Check-In"];
+const cat=id=>CATEGORIES.find(c=>c.id===id)||CATEGORIES[0];
+const todayStr=()=>new Date().toISOString().split("T")[0];
+const isSaturday=()=>new Date().getDay()===6;
+const currentMonth=()=>new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"});
+const uid=()=>Math.random().toString(36).substr(2,9);
+const deepCopy=o=>JSON.parse(JSON.stringify(o));
+const timeToMins=t=>{const[h,m]=t.split(":").map(Number);return h*60+m;};
 
-function applyTimerSettings() {
-  const w = parseInt(document.getElementById("setting-work").value) || 25;
-  const b = parseInt(document.getElementById("setting-break").value) || 5;
-  timer.workMins = Math.max(1, Math.min(60, w));
-  timer.breakMins = Math.max(1, Math.min(30, b));
-  if (!timer.running && !timer.isBreak) timer.secondsLeft = timer.workMins * 60;
-  closeTimerSettings();
-  updateTimerBar();
-}
-
-// ---- APP STATE ----
-const TABS = ["Bricks","Intentions","Goals","Milestones","Lists","Check-In"];
-const cat = id => CATEGORIES.find(c=>c.id===id)||CATEGORIES[0];
-const todayStr = () => new Date().toISOString().split("T")[0];
-const isSaturday = () => new Date().getDay()===6;
-const currentMonth = () => new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"});
-const uid = () => Math.random().toString(36).substr(2,9);
-const deepCopy = obj => JSON.parse(JSON.stringify(obj));
-const timeToMins = t => { const [h,m]=t.split(":").map(Number); return h*60+m; };
-
-let state = {
+let state={
   activeTab:"Bricks",
   brickView:"tetris",
-  editingBrickId:null,
-  templates:[{ id:"t1", name:"Standard Day", bricks:deepCopy(DEFAULT_BRICKS) }],
+  editBrickModal:null,
+  templates:[{id:"t1",name:"Standard Day",bricks:deepCopy(DEFAULT_BRICKS)}],
   activeTemplateId:"t1",
   todayBricks:deepCopy(DEFAULT_BRICKS),
   intentions:deepCopy(SEED_INTENTIONS),
   goals:deepCopy(SEED_GOALS),
   milestones:deepCopy(SEED_MILESTONES),
+  projects:deepCopy(SEED_PROJECTS),
   lists:deepCopy(SEED_LISTS),
   listArchive:{},
+  projectHours:{},
   listView:"category",
   checkins:{},
-  todayCompleted:[],
-  todayNote:"",
-  todayListsDone:[],
+  todayCompleted:[], todayNote:"", todayListsDone:[],
   weeklyWins:"", weeklyChallenges:"", weeklyAdjustments:"",
-  showAddBrick:false,
-  showAddTemplate:false,
-  editingTemplateId:null,
-  newTemplateName:"",
-  newBrick:{ category:"spiritual", label:"", start:"09:00", end:"09:30" },
-  newIntention:"",
-  newGoal:{ text:"", category:"spiritual" },
-  newMilestone:{ text:"", category:"spiritual", goalId:"" },
-  newItem:{ text:"", category:"spiritual", project:"" },
+  showAddBrick:false, showAddTemplate:false, editingTemplateId:null, newTemplateName:"",
+  showProjectManager:false,
+  newBrick:{category:"spiritual",label:"",start:"09:00",end:"09:30",project:""},
+  newIntention:"", newGoal:{text:"",category:"spiritual"},
+  newMilestone:{text:"",category:"spiritual",goalId:""},
+  newItem:{text:"",category:"spiritual",project:""},
+  newProject:{name:"",goalId:""},
 };
 
-function loadState() {
-  try {
-    ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins","brickView"].forEach(k=>{
+function loadState(){
+  try{
+    ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","projects","lists","listArchive","projectHours","checkins","brickView"].forEach(k=>{
       const v=localStorage.getItem("5x5_"+k); if(v) state[k]=JSON.parse(v);
     });
     const td=state.checkins[todayStr()];
     if(td){ state.todayCompleted=td.completed||[]; state.todayNote=td.note||""; state.todayListsDone=td.listsDone||[]; }
     const wr=state.checkins["weekly_"+todayStr()];
     if(wr){ state.weeklyWins=wr.wins||""; state.weeklyChallenges=wr.challenges||""; state.weeklyAdjustments=wr.adjustments||""; }
-  } catch(e){}
+  }catch(e){}
 }
 
-function persist(k){ try{ localStorage.setItem("5x5_"+k,JSON.stringify(state[k])); }catch(e){} }
-function persistAll(){ ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","lists","listArchive","checkins","brickView"].forEach(persist); }
+function persist(k){ try{localStorage.setItem("5x5_"+k,JSON.stringify(state[k]));}catch(e){} }
+function persistAll(){ ["templates","activeTemplateId","todayBricks","intentions","goals","milestones","projects","lists","listArchive","projectHours","checkins","brickView"].forEach(persist); }
+function saveCheckin(){
+  logProjectHours();
+  state.checkins[todayStr()]={completed:state.todayCompleted,note:state.todayNote,listsDone:state.todayListsDone};
+  persist("checkins");
+}
 
-function saveCheckin(){ state.checkins[todayStr()]={completed:state.todayCompleted,note:state.todayNote,listsDone:state.todayListsDone}; persist("checkins"); }
+function logProjectHours(){
+  // Remove any prior log for today first (so re-saving doesn't double count)
+  const dk=todayStr();
+  if(!state.projectHours) state.projectHours={};
+  if(!state.projectHours[dk]) state.projectHours[dk]={};
+  else state.projectHours[dk]={};
+  state.todayBricks.forEach(b=>{
+    if(!b.project) return;
+    if(!state.todayCompleted.includes(b.id)) return;
+    const mins=timeToMins(b.end)-timeToMins(b.start);
+    state.projectHours[dk][b.project]=(state.projectHours[dk][b.project]||0)+mins;
+  });
+  persist("projectHours");
+}
+
+function getProjectTotals(project){
+  if(!state.projectHours) return {week:0,month:0,allTime:0};
+  const now=new Date();
+  const startOfWeek=new Date(now); startOfWeek.setDate(now.getDate()-now.getDay()); startOfWeek.setHours(0,0,0,0);
+  const startOfMonth=new Date(now.getFullYear(),now.getMonth(),1);
+  let week=0,month=0,allTime=0;
+  Object.keys(state.projectHours).forEach(dateKey=>{
+    const mins=state.projectHours[dateKey][project]||0;
+    if(!mins) return;
+    allTime+=mins;
+    const d=new Date(dateKey+"T00:00:00");
+    if(d>=startOfMonth) month+=mins;
+    if(d>=startOfWeek) week+=mins;
+  });
+  return {week,month,allTime};
+}
+
+function fmtHours(mins){
+  const h=Math.floor(mins/60), m=mins%60;
+  if(h===0) return `${m}m`;
+  if(m===0) return `${h}h`;
+  return `${h}h ${m}m`;
+}
+
 function saveWeekly(){ state.checkins["weekly_"+todayStr()]={wins:state.weeklyWins,challenges:state.weeklyChallenges,adjustments:state.weeklyAdjustments}; persist("checkins"); }
 
+function shiftSchedule(mins){
+  const minsToTime=m=>{ m=((m%1440)+1440)%1440; return `${String(Math.floor(m/60)).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`; };
+  state.todayBricks=state.todayBricks.map(b=>({...b,start:minsToTime(timeToMins(b.start)+mins),end:minsToTime(timeToMins(b.end)+mins)}));
+  persist("todayBricks");
+  render();
+}
+
 function doRestart(){
-  if(!confirm("Reset today's check-in and reload your default template? Your data stays safe.")) return;
+  if(!confirm("Reset today's check-in and reload your template? Your data stays safe.")) return;
   const t=state.templates.find(t=>t.id===state.activeTemplateId)||state.templates[0];
   state.todayBricks=deepCopy(t.bricks);
   state.todayCompleted=[]; state.todayNote=""; state.todayListsDone=[];
   delete state.checkins[todayStr()];
   persist("todayBricks"); persist("checkins");
   clearInterval(timer.interval); timer.interval=null; timer.running=false; timer.isDone=false; timer.isBreak=false; timer.brickId=null; timer.brickLabel="No brick selected"; timer.secondsLeft=timer.workMins*60;
-  updateTimerBar();
-  alert("Fresh start. Morning practice first.");
+  updateTimerBar(); alert("Fresh start. Morning practice first."); render();
+}
+
+// ---- DRAG AND DROP (long press) ----
+const drag={ active:false, brickId:null, el:null, longPressTimer:null, startY:0 };
+
+function attachDragHandlers(){
+  document.querySelectorAll(".tetris-brick[data-brick-id]").forEach(el=>{
+    el.addEventListener("touchstart",dragTouchStart,{passive:true});
+    el.addEventListener("touchmove",dragTouchMove,{passive:false});
+    el.addEventListener("touchend",dragTouchEnd);
+    el.addEventListener("touchcancel",dragCancel);
+    el.addEventListener("mousedown",dragMouseDown);
+  });
+}
+
+function dragTouchStart(e){
+  const el=e.currentTarget;
+  drag.startY=e.touches[0].clientY;
+  drag.longPressTimer=setTimeout(()=>{
+    drag.active=true; drag.brickId=el.dataset.brickId; drag.el=el;
+    el.classList.add("dragging");
+    if(navigator.vibrate) navigator.vibrate(30);
+  },450);
+}
+
+function dragTouchMove(e){
+  if(!drag.active){
+    // if moved before long press completes, cancel (it's a scroll)
+    if(Math.abs(e.touches[0].clientY-drag.startY)>10){ clearTimeout(drag.longPressTimer); }
+    return;
+  }
+  e.preventDefault();
+  const touch=e.touches[0];
+  const under=document.elementFromPoint(touch.clientX,touch.clientY);
+  const target=under?under.closest(".tetris-brick[data-brick-id]"):null;
+  document.querySelectorAll(".tetris-brick.drop-target").forEach(el=>el.classList.remove("drop-target"));
+  if(target&&target.dataset.brickId!==drag.brickId) target.classList.add("drop-target");
+}
+
+function dragTouchEnd(e){
+  clearTimeout(drag.longPressTimer);
+  if(!drag.active) return;
+  const touch=e.changedTouches[0];
+  const under=document.elementFromPoint(touch.clientX,touch.clientY);
+  const target=under?under.closest(".tetris-brick[data-brick-id]"):null;
+  if(target&&target.dataset.brickId!==drag.brickId){
+    swapBrickTimes(drag.brickId,target.dataset.brickId);
+  }
+  dragCancel();
+}
+
+function dragCancel(){
+  clearTimeout(drag.longPressTimer);
+  if(drag.el) drag.el.classList.remove("dragging");
+  document.querySelectorAll(".tetris-brick.drop-target").forEach(el=>el.classList.remove("drop-target"));
+  drag.active=false; drag.brickId=null; drag.el=null;
+}
+
+// desktop fallback
+function dragMouseDown(e){
+  const el=e.currentTarget;
+  drag.longPressTimer=setTimeout(()=>{
+    drag.active=true; drag.brickId=el.dataset.brickId; drag.el=el;
+    el.classList.add("dragging");
+    const onMove=ev=>{
+      const under=document.elementFromPoint(ev.clientX,ev.clientY);
+      const target=under?under.closest(".tetris-brick[data-brick-id]"):null;
+      document.querySelectorAll(".tetris-brick.drop-target").forEach(x=>x.classList.remove("drop-target"));
+      if(target&&target.dataset.brickId!==drag.brickId) target.classList.add("drop-target");
+    };
+    const onUp=ev=>{
+      document.removeEventListener("mousemove",onMove);
+      document.removeEventListener("mouseup",onUp);
+      const under=document.elementFromPoint(ev.clientX,ev.clientY);
+      const target=under?under.closest(".tetris-brick[data-brick-id]"):null;
+      if(target&&target.dataset.brickId!==drag.brickId) swapBrickTimes(drag.brickId,target.dataset.brickId);
+      dragCancel();
+    };
+    document.addEventListener("mousemove",onMove);
+    document.addEventListener("mouseup",onUp);
+  },450);
+  el.addEventListener("mouseup",()=>clearTimeout(drag.longPressTimer),{once:true});
+}
+
+function swapBrickTimes(idA,idB){
+  const a=state.todayBricks.find(b=>b.id===idA);
+  const b=state.todayBricks.find(b=>b.id===idB);
+  if(!a||!b) return;
+  const t1=a.start,e1=a.end;
+  a.start=b.start; a.end=b.end;
+  b.start=t1; b.end=e1;
+  persist("todayBricks");
   render();
 }
 
-function archiveCompletedLists(){
-  const done=state.lists.filter(l=>l.done);
-  if(!done.length){ alert("No completed tasks to archive."); return; }
-  const dk=todayStr();
-  if(!state.listArchive[dk]) state.listArchive[dk]=[];
-  state.listArchive[dk].push(...done);
-  state.lists=state.lists.filter(l=>!l.done);
-  persist("lists"); persist("listArchive"); render();
-}
-
+// ---- RENDER ----
 function render(){
   document.getElementById("app").innerHTML=`
     <div class="header"><div class="header-eyebrow">Summer of Discipline</div><div class="header-title">5×5 Bricks of Wellbeing</div></div>
@@ -457,6 +527,8 @@ function render(){
     <div id="content"></div>
     ${state.showAddBrick?renderAddBrickModal():""}
     ${state.showAddTemplate?renderAddTemplateModal():""}
+    ${state.editBrickModal?renderEditBrickModal():""}
+    ${state.showProjectManager?renderProjectManager():""}
   `;
   const c=document.getElementById("content");
   if(state.activeTab==="Bricks") c.innerHTML=renderBricks();
@@ -465,59 +537,55 @@ function render(){
   else if(state.activeTab==="Milestones") c.innerHTML=renderMilestones();
   else if(state.activeTab==="Lists") c.innerHTML=renderLists();
   else if(state.activeTab==="Check-In") c.innerHTML=renderCheckin();
+  if(state.activeTab==="Bricks"&&state.brickView==="tetris") attachDragHandlers();
 }
 
 function setTab(t){ state.activeTab=t; render(); }
 
-// ---- TETRIS VIEW ----
-function buildStacks(bricks) {
+// ---- TETRIS ----
+function buildStacks(bricks){
   const sorted=[...bricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
-  const stacks=[];
-  let current=null;
+  const stacks=[]; let cur=null;
   for(const b of sorted){
-    if(current && b.label===current[0].label && b.category===current[0].category){
-      current.push(b);
-    } else {
-      if(current) stacks.push(current);
-      current=[b];
-    }
+    if(cur&&b.label===cur[0].label&&b.category===cur[0].category) cur.push(b);
+    else { if(cur) stacks.push(cur); cur=[b]; }
   }
-  if(current) stacks.push(current);
+  if(cur) stacks.push(cur);
   return stacks;
 }
 
 function renderTetris(){
   const stacks=buildStacks(state.todayBricks);
-  if(!stacks.length) return `<div class="empty-msg">No bricks yet. Add some below.</div>`;
-  return stacks.map(stack=>{
-    const c=cat(stack[0].category);
-    const isActive=timer.brickId && stack.some(b=>b.id===timer.brickId);
-    const brickRows=stack.map((brick,i)=>{
-      const pos=stack.length===1?"is-solo":i===0?"is-top":i===stack.length-1?"is-bot":"is-mid";
-      const mins=timeToMins(brick.end)-timeToMins(brick.start);
-      return `<div class="tetris-brick ${pos}${isActive?" active-timer":""}" style="background:${c.light};border-left-color:${c.color}">
-        <div style="flex:1;min-width:0">
-          ${i===0?`<div class="tetris-label" style="color:${c.color}">${brick.label}</div>`:`<div style="height:2px;background:${c.color};opacity:0.2;border-radius:1px;margin:2px 0"></div>`}
-          <div class="tetris-time" style="color:${c.color}">${brick.start}–${brick.end} · ${mins}m</div>
-        </div>
-        <div class="tetris-actions">
-          <button class="tetris-start-btn" style="color:${c.color};border-color:${c.color}" onclick="startBrickTimer('${brick.id}','${brick.label.replace(/'/g,"\\'")}')">▶</button>
-          <button class="btn-ghost" style="color:${c.color};font-size:12px;padding:4px 6px" onclick="state.editingBrickId='${brick.id}';state.brickView='edit';persist('brickView');render()">✎</button>
-        </div>
-      </div>`;
+  if(!stacks.length) return `<div class="empty-msg">No bricks yet. Add some.</div>`;
+  return `<div class="drag-hint">Long press any brick to drag and swap positions. Tap ✎ to edit times.</div>`+
+    stacks.map(stack=>{
+      const c=cat(stack[0].category);
+      const isActive=timer.brickId&&stack.some(b=>b.id===timer.brickId);
+      const rows=stack.map((brick,i)=>{
+        const pos=stack.length===1?"is-solo":i===0?"is-top":i===stack.length-1?"is-bot":"is-mid";
+        const mins=timeToMins(brick.end)-timeToMins(brick.start);
+        return `<div class="tetris-brick ${pos}${isActive?" active-timer":""}" data-brick-id="${brick.id}" style="background:${c.light};border-left-color:${c.color}">
+          <div style="flex:1;min-width:0">
+            ${i===0?`<div class="tetris-label" style="color:${c.color}">${brick.label}${brick.project?` <span class="tag-pill">${brick.project}</span>`:""}</div>`:``}
+            <div class="tetris-time" style="color:${c.color}">${brick.start}–${brick.end} · ${mins}m</div>
+          </div>
+          <div class="tetris-actions">
+            <button class="tetris-start-btn" style="color:${c.color};border-color:${c.color}" onclick="event.stopPropagation();startBrickTimer('${brick.id}','${brick.label.replace(/'/g,"\\'")}')">▶</button>
+            <button class="btn-ghost" style="color:${c.color};font-size:12px;padding:4px 6px" onclick="event.stopPropagation();openEditBrick('${brick.id}')">✎</button>
+          </div>
+        </div>`;
+      }).join("");
+      return `<div class="tetris-stack">${rows}</div>`;
     }).join("");
-    return `<div class="tetris-stack">${brickRows}</div>`;
-  }).join("");
 }
 
-// ---- TIMELINE VIEW ----
+// ---- TIMELINE (tap to edit) ----
 function renderTimeline(){
   const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
   if(!sorted.length) return `<div class="empty-msg">No bricks yet.</div>`;
   const minStart=timeToMins(sorted[0].start);
   const maxEnd=Math.max(...sorted.map(b=>timeToMins(b.end)));
-  const PX=2.2;
-  const totalH=(maxEnd-minStart)*PX;
+  const PX=2.2, totalH=(maxEnd-minStart)*PX;
   const startH=Math.floor(minStart/60), endH=Math.ceil(maxEnd/60);
   let hourLabels="";
   for(let h=startH;h<=endH;h++){
@@ -530,54 +598,70 @@ function renderTimeline(){
     const top=(timeToMins(b.start)-minStart)*PX;
     const h=(timeToMins(b.end)-timeToMins(b.start))*PX;
     const isActive=timer.brickId===b.id;
-    return `<div class="tl-brick" style="top:${top}px;height:${h-2}px;background:${c.light};border-left-color:${c.color}${isActive?";box-shadow:0 0 0 2px #1a1a1a":""}" onclick="state.editingBrickId='${b.id}';state.brickView='edit';persist('brickView');render()">
+    return `<div class="tl-brick" style="top:${top}px;height:${h-2}px;background:${c.light};border-left-color:${c.color}${isActive?";box-shadow:0 0 0 2px #1a1a1a":""}" onclick="openEditBrick('${b.id}')">
       ${h>14?`<div class="tl-brick-label" style="color:${c.color}">${b.label}</div>`:""}
       ${h>26?`<div class="tl-brick-time" style="color:${c.color}">${b.start}–${b.end}</div>`:""}
     </div>`;
   }).join("");
-  return `<div class="timeline-wrap">
+  return `<div class="drag-hint">Tap any block to edit its time, label, or category.</div>
+  <div class="timeline-wrap">
     <div class="timeline-time-col" style="height:${totalH}px">${hourLabels}</div>
     <div class="timeline-brick-col" style="height:${totalH}px">${bricks}</div>
   </div>`;
 }
 
-// ---- EDIT VIEW ----
-function renderEditList(){
-  const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
-  return sorted.map((brick,idx)=>{
-    const c=cat(brick.category);
-    if(state.editingBrickId===brick.id){
-      return `<div class="edit-brick-row">
-        <div style="display:flex;flex-direction:column;gap:2px">
-          <button class="arrow-btn" onclick="moveBrick('${brick.id}',-1)">▲</button>
-          <button class="arrow-btn" onclick="moveBrick('${brick.id}',1)">▼</button>
+// ---- EDIT BRICK MODAL ----
+function openEditBrick(id){ state.editBrickModal=id; render(); }
+
+function renderEditBrickModal(){
+  const brick=state.todayBricks.find(b=>b.id===state.editBrickModal);
+  if(!brick) return "";
+  const c=cat(brick.category);
+  return `<div class="modal-overlay" onclick="if(event.target===this){state.editBrickModal=null;render()}">
+    <div class="modal-box">
+      <div class="modal-title" style="color:${c.color}">Edit Brick</div>
+      <div class="flex-col">
+        <label style="margin-top:0">Label</label>
+        <input id="eb-label" value="${brick.label}" />
+        <label>Time</label>
+        <div class="flex-row">
+          <input type="time" id="eb-start" value="${brick.start}" />
+          <input type="time" id="eb-end" value="${brick.end}" />
         </div>
-        <div style="flex:1;border-radius:10px;padding:12px 14px;background:${c.light};border-left:4px solid ${c.color};display:flex;flex-direction:column;gap:8px">
-          <input value="${brick.label}" onchange="updateBrickField('${brick.id}','label',this.value)" />
-          <div class="flex-row">
-            <input type="time" value="${brick.start}" onchange="updateBrickField('${brick.id}','start',this.value)" />
-            <input type="time" value="${brick.end}" onchange="updateBrickField('${brick.id}','end',this.value)" />
-          </div>
-          <select onchange="updateBrickField('${brick.id}','category',this.value)">${CATEGORIES.map(c=>`<option value="${c.id}"${brick.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select>
-          <div class="flex-row">
-            <button class="btn-primary btn-small" style="background:${c.color}" onclick="state.editingBrickId=null;render()">Done</button>
-            <button class="btn-ghost btn-danger" onclick="deleteTodayBrick('${brick.id}')">Delete</button>
-          </div>
+        <label>Category</label>
+        <select id="eb-cat">${CATEGORIES.map(x=>`<option value="${x.id}"${brick.category===x.id?" selected":""}>${x.label}</option>`).join("")}</select>
+        <label>Project (for time tracking)</label>
+        <select id="eb-project">
+          <option value=""${!brick.project?" selected":""}>No project</option>
+          ${state.projects.map(p=>`<option value="${p.name}"${brick.project===p.name?" selected":""}>${p.name}</option>`).join("")}
+        </select>
+        <div class="flex-row" style="margin-top:8px">
+          <button class="btn-primary" style="background:${c.color}" onclick="saveEditBrick('${brick.id}')">Save</button>
+          <button class="btn-ghost btn-danger" onclick="deleteBrickFromModal('${brick.id}')">Delete</button>
+          <button class="btn-ghost" onclick="state.editBrickModal=null;render()">Cancel</button>
         </div>
-      </div>`;
-    }
-    const mins=timeToMins(brick.end)-timeToMins(brick.start);
-    return `<div class="edit-brick-row">
-      <div style="display:flex;flex-direction:column;gap:2px">
-        <button class="arrow-btn" onclick="moveBrick('${brick.id}',-1)">▲</button>
-        <button class="arrow-btn" onclick="moveBrick('${brick.id}',1)">▼</button>
       </div>
-      <div class="edit-brick-card" style="background:${c.light};border-left-color:${c.color}">
-        <div><div style="font-weight:600;font-size:13px">${brick.label}</div><div style="font-size:11px;color:#888">${brick.start}–${brick.end} · ${mins}m</div></div>
-        <button class="btn-ghost" style="font-size:12px" onclick="state.editingBrickId='${brick.id}';render()">Edit</button>
-      </div>
-    </div>`;
-  }).join("");
+    </div>
+  </div>`;
+}
+
+function saveEditBrick(id){
+  const label=document.getElementById("eb-label").value.trim();
+  const start=document.getElementById("eb-start").value;
+  const end=document.getElementById("eb-end").value;
+  const category=document.getElementById("eb-cat").value;
+  const project=document.getElementById("eb-project").value;
+  if(!label||!start||!end) return;
+  state.todayBricks=state.todayBricks.map(b=>b.id===id?{...b,label,start,end,category,project}:b);
+  state.editBrickModal=null;
+  persist("todayBricks"); render();
+}
+
+function deleteBrickFromModal(id){
+  if(!confirm("Delete this brick?")) return;
+  state.todayBricks=state.todayBricks.filter(b=>b.id!==id);
+  state.editBrickModal=null;
+  persist("todayBricks"); render();
 }
 
 // ---- BRICKS TAB ----
@@ -594,69 +678,144 @@ function renderBricks(){
       <button onclick="saveTodayToTemplate()" class="btn-ghost" style="font-size:12px;color:#6B7FD7">Save today → template</button>
     </div>
   </div>`;
-
   const viewToggle=`<div style="display:flex;gap:8px;margin-bottom:16px;align-items:center">
-    <button class="pill-toggle" style="background:${state.brickView==="tetris"?"#222":"#eee"};color:${state.brickView==="tetris"?"#fff":"#555"}" onclick="state.brickView='tetris';state.editingBrickId=null;persist('brickView');render()">Blocks</button>
-    <button class="pill-toggle" style="background:${state.brickView==="timeline"?"#222":"#eee"};color:${state.brickView==="timeline"?"#fff":"#555"}" onclick="state.brickView='timeline';state.editingBrickId=null;persist('brickView');render()">Timeline</button>
-    <button class="pill-toggle" style="background:${state.brickView==="edit"?"#222":"#eee"};color:${state.brickView==="edit"?"#fff":"#555"}" onclick="state.brickView='edit';persist('brickView');render()">Edit</button>
+    <button class="pill-toggle" style="background:${state.brickView==="tetris"?"#222":"#eee"};color:${state.brickView==="tetris"?"#fff":"#555"}" onclick="state.brickView='tetris';persist('brickView');render()">Blocks</button>
+    <button class="pill-toggle" style="background:${state.brickView==="timeline"?"#222":"#eee"};color:${state.brickView==="timeline"?"#fff":"#555"}" onclick="state.brickView='timeline';persist('brickView');render()">Timeline</button>
     <button class="btn-primary btn-small" style="margin-left:auto" onclick="state.showAddBrick=true;render()">+ Add</button>
   </div>`;
-
   const dateBar=`<div style="font-size:12px;color:#aaa;margin-bottom:12px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>`;
-
   const legend=CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:4px;font-size:11px"><div style="width:8px;height:8px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
-
-  let mainContent="";
-  if(state.brickView==="tetris") mainContent=renderTetris();
-  else if(state.brickView==="timeline") mainContent=renderTimeline();
-  else mainContent=renderEditList();
-
-  return `${templateBar}${viewToggle}${dateBar}
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${legend}</div>
-    ${mainContent}
-    <button class="btn-restart" onclick="doRestart()">↺ Fresh Start — Reset Today</button>`;
+  const main=state.brickView==="tetris"?renderTetris():renderTimeline();
+  const shiftBar=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:14px">
+    <span style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-right:2px">Shift day</span>
+    <button class="btn-ghost" style="border:1px solid #ddd;border-radius:6px;font-size:12px;padding:5px 10px" onclick="shiftSchedule(-60)">−1h</button>
+    <button class="btn-ghost" style="border:1px solid #ddd;border-radius:6px;font-size:12px;padding:5px 10px" onclick="shiftSchedule(-30)">−30m</button>
+    <button class="btn-ghost" style="border:1px solid #ddd;border-radius:6px;font-size:12px;padding:5px 10px" onclick="shiftSchedule(30)">+30m</button>
+    <button class="btn-ghost" style="border:1px solid #ddd;border-radius:6px;font-size:12px;padding:5px 10px" onclick="shiftSchedule(60)">+1h</button>
+  </div>`;
+  return `${templateBar}${viewToggle}${dateBar}<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px">${legend}</div>${shiftBar}${main}<button class="btn-restart" onclick="doRestart()">↺ Fresh Start — Reset Today</button>`;
 }
 
 function loadTemplate(id){ const t=state.templates.find(t=>t.id===id); if(!t) return; state.activeTemplateId=id; state.todayBricks=deepCopy(t.bricks); persist("activeTemplateId"); persist("todayBricks"); render(); }
 function saveTodayToTemplate(){ state.templates=state.templates.map(t=>t.id===state.activeTemplateId?{...t,bricks:deepCopy(state.todayBricks)}:t); persist("templates"); alert("Saved to template."); }
-function moveBrick(id,dir){ const s=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start)); const i=s.findIndex(b=>b.id===id),tgt=i+dir; if(tgt<0||tgt>=s.length) return; const t1=s[i].start,e1=s[i].end; s[i]={...s[i],start:s[tgt].start,end:s[tgt].end}; s[tgt]={...s[tgt],start:t1,end:e1}; state.todayBricks=s; persist("todayBricks"); render(); }
-function updateBrickField(id,f,v){ state.todayBricks=state.todayBricks.map(b=>b.id===id?{...b,[f]:v}:b); persist("todayBricks"); }
-function deleteTodayBrick(id){ state.todayBricks=state.todayBricks.filter(b=>b.id!==id); state.editingBrickId=null; persist("todayBricks"); render(); }
 function editTemplate(id){ state.editingTemplateId=id; const t=state.templates.find(t=>t.id===id); state.newTemplateName=t?t.name:""; state.showAddTemplate=true; render(); }
 function deleteTemplate(id){ if(state.templates.length<=1) return; state.templates=state.templates.filter(t=>t.id!==id); state.activeTemplateId=state.templates[0].id; state.todayBricks=deepCopy(state.templates[0].bricks); persist("templates"); persist("activeTemplateId"); persist("todayBricks"); render(); }
 
 function renderAddTemplateModal(){ const isEdit=!!state.editingTemplateId; return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddTemplate=false;state.editingTemplateId=null;render()}"><div class="modal-box"><div class="modal-title">${isEdit?"Rename":"New Template"}</div><div class="flex-col"><input id="tname" placeholder="e.g. MWF, Travel Day" value="${state.newTemplateName}" oninput="state.newTemplateName=this.value" />${!isEdit?`<div class="sub-text" style="margin:0">Copies today's bricks as starting point.</div>`:""}<div class="flex-row"><button class="btn-primary" onclick="saveTemplate()">${isEdit?"Save":"Create"}</button><button class="btn-ghost" onclick="state.showAddTemplate=false;state.editingTemplateId=null;render()">Cancel</button></div></div></div></div>`; }
+function saveTemplate(){ const el=document.getElementById("tname"); const name=(el?el.value:state.newTemplateName).trim(); if(!name) return; if(state.editingTemplateId){ state.templates=state.templates.map(t=>t.id===state.editingTemplateId?{...t,name}:t); } else { const nt={id:uid(),name,bricks:deepCopy(state.todayBricks)}; state.templates.push(nt); state.activeTemplateId=nt.id; } state.newTemplateName=""; state.editingTemplateId=null; state.showAddTemplate=false; persist("templates"); persist("activeTemplateId"); render(); }
+function renderAddBrickModal(){ const nb=state.newBrick; return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddBrick=false;render()}"><div class="modal-box"><div class="modal-title">New Brick</div><div class="flex-col"><input id="nb-label" placeholder="Label" value="${nb.label}" oninput="state.newBrick.label=this.value" /><select onchange="state.newBrick.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${nb.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><select onchange="state.newBrick.project=this.value"><option value="">No project</option>${state.projects.map(p=>`<option value="${p.name}"${nb.project===p.name?" selected":""}>${p.name}</option>`).join("")}</select><div class="flex-row"><input type="time" value="${nb.start}" onchange="state.newBrick.start=this.value" /><input type="time" value="${nb.end}" onchange="state.newBrick.end=this.value" /></div><div class="flex-row"><button class="btn-primary" onclick="addBrick()">Add</button><button class="btn-ghost" onclick="state.showAddBrick=false;render()">Cancel</button></div></div></div></div>`; }
+function addBrick(){ const el=document.getElementById("nb-label"); const label=(el?el.value:state.newBrick.label).trim(); if(!label) return; state.todayBricks.push({...state.newBrick,label,id:uid()}); state.newBrick={category:"spiritual",label:"",start:"09:00",end:"09:30",project:""}; state.showAddBrick=false; persist("todayBricks"); render(); }
 
-function saveTemplate(){ const el=document.getElementById("tname"); const name=(el?el.value:state.newTemplateName).trim(); if(!name) return; if(state.editingTemplateId){ state.templates=state.templates.map(t=>t.id===state.editingTemplateId?{...t,name}:t); } else { const newT={id:uid(),name,bricks:deepCopy(state.todayBricks)}; state.templates.push(newT); state.activeTemplateId=newT.id; } state.newTemplateName=""; state.editingTemplateId=null; state.showAddTemplate=false; persist("templates"); persist("activeTemplateId"); render(); }
+// ---- PROJECTS ----
+function renderProjectManager(){
+  const rows=state.projects.map(p=>{
+    const g=state.goals.find(g=>g.id===p.goalId);
+    const totals=getProjectTotals(p.name);
+    return `<div class="list-row" style="align-items:flex-start">
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:600;color:#333">${p.name}</div>
+        ${g?`<div class="linked-goal">→ ${g.text}</div>`:""}
+        <div style="display:flex;gap:12px;margin-top:6px">
+          <div style="font-size:11px;color:#888"><span style="font-weight:700;color:#333">${fmtHours(totals.week)}</span> this week</div>
+          <div style="font-size:11px;color:#888"><span style="font-weight:700;color:#333">${fmtHours(totals.month)}</span> this month</div>
+        </div>
+      </div>
+      <button class="btn-ghost btn-danger" onclick="deleteProject('${p.id}')">✕</button>
+    </div>`;
+  }).join("");
+  return `<div class="modal-overlay" onclick="if(event.target===this){state.showProjectManager=false;render()}">
+    <div class="modal-box">
+      <div class="modal-title">Projects</div>
+      ${rows||'<div class="empty-msg">No projects yet.</div>'}
+      <hr class="section-divider"/>
+      <div class="flex-col">
+        <input id="np-name" placeholder="Project name" value="${state.newProject.name}" oninput="state.newProject.name=this.value" />
+        <select id="np-goal" onchange="state.newProject.goalId=this.value">
+          <option value="">Link to goal (optional)</option>
+          ${state.goals.map(g=>`<option value="${g.id}"${state.newProject.goalId===g.id?" selected":""}>${g.text}</option>`).join("")}
+        </select>
+        <div class="flex-row">
+          <button class="btn-primary" onclick="addProject()">Add Project</button>
+          <button class="btn-ghost" onclick="state.showProjectManager=false;render()">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
 
-function renderAddBrickModal(){ const nb=state.newBrick; return `<div class="modal-overlay" onclick="if(event.target===this){state.showAddBrick=false;render()}"><div class="modal-box"><div class="modal-title">New Brick</div><div class="flex-col"><input id="nb-label" placeholder="Label" value="${nb.label}" oninput="state.newBrick.label=this.value" /><select onchange="state.newBrick.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${nb.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><div class="flex-row"><input type="time" value="${nb.start}" onchange="state.newBrick.start=this.value" /><input type="time" value="${nb.end}" onchange="state.newBrick.end=this.value" /></div><div class="flex-row"><button class="btn-primary" onclick="addBrick()">Add</button><button class="btn-ghost" onclick="state.showAddBrick=false;render()">Cancel</button></div></div></div></div>`; }
+function addProject(){
+  const el=document.getElementById("np-name");
+  const name=(el?el.value:state.newProject.name).trim();
+  if(!name) return;
+  if(state.projects.find(p=>p.name.toLowerCase()===name.toLowerCase())){ alert("Project already exists."); return; }
+  state.projects.push({id:uid(),name,goalId:state.newProject.goalId});
+  state.newProject={name:"",goalId:""};
+  persist("projects"); render();
+}
 
-function addBrick(){ const el=document.getElementById("nb-label"); const label=(el?el.value:state.newBrick.label).trim(); if(!label) return; state.todayBricks.push({...state.newBrick,label,id:uid()}); state.newBrick={category:"spiritual",label:"",start:"09:00",end:"09:30"}; state.showAddBrick=false; persist("todayBricks"); render(); }
+function deleteProject(id){
+  if(!confirm("Delete this project? Tasks tagged with it keep their tag.")) return;
+  state.projects=state.projects.filter(p=>p.id!==id);
+  persist("projects"); render();
+}
 
-// INTENTIONS
+// ---- INTENTIONS / GOALS / MILESTONES ----
 function renderIntentions(){ const rows=state.intentions.map(i=>`<div class="list-row"><span style="flex:1;font-size:14px;color:#333">${i.text}</span><button class="btn-ghost btn-danger" onclick="deleteIntention('${i.id}')">✕</button></div>`).join(""); return `<div class="section-head">Intentions</div><div class="sub-text">What you feel called to bring into form. No timeline. From the heart.</div>${rows||'<div class="empty-msg">No intentions yet.</div>'}<div style="margin-top:12px"><textarea id="new-intention" rows="2" placeholder="Add an intention..." onchange="state.newIntention=this.value">${state.newIntention}</textarea><button class="btn-primary btn-small" style="margin-top:8px" onclick="addIntention()">Add</button></div>`; }
 function addIntention(){ const el=document.getElementById("new-intention"); const t=(el?el.value:state.newIntention).trim(); if(!t) return; state.intentions.push({id:uid(),text:t}); state.newIntention=""; persist("intentions"); render(); }
 function deleteIntention(id){ state.intentions=state.intentions.filter(i=>i.id!==id); persist("intentions"); render(); }
 
-// GOALS
-function renderGoals(){ const sections=CATEGORIES.map(c=>{ const cg=state.goals.filter(g=>g.category===c.id); const rows=cg.map(g=>{ const ms=state.milestones.filter(m=>m.goalId===g.id); const done=ms.filter(m=>m.done).length; return `<div class="list-row" style="margin-left:16px;margin-bottom:6px"><span style="flex:1;font-size:14px;color:#333">${g.text}</span>${ms.length?`<span class="goal-count">${done}/${ms.length}</span>`:""}<button class="btn-ghost btn-danger" onclick="deleteGoal('${g.id}')">✕</button></div>`; }).join(""); return `<div style="margin-bottom:18px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>${rows||`<div class="empty-msg">No goals yet.</div>`}</div>`; }).join(""); return `<div class="section-head">Goals</div><div class="sub-text">No timeline. Add milestones in the Milestones tab.</div>${sections}<hr class="section-divider"/><div class="flex-col"><textarea id="new-goal-text" rows="2" placeholder="New goal..." onchange="state.newGoal.text=this.value">${state.newGoal.text}</textarea><select onchange="state.newGoal.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newGoal.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><button class="btn-primary" onclick="addGoal()">Add Goal</button></div>`; }
+function renderGoals(){ const sections=CATEGORIES.map(c=>{ const cg=state.goals.filter(g=>g.category===c.id); const rows=cg.map(g=>{ const ms=state.milestones.filter(m=>m.goalId===g.id); const done=ms.filter(m=>m.done).length; return `<div class="list-row" style="margin-left:16px;margin-bottom:6px"><span style="flex:1;font-size:14px;color:#333">${g.text}</span>${ms.length?`<span class="goal-count">${done}/${ms.length}</span>`:""}<button class="btn-ghost btn-danger" onclick="deleteGoal('${g.id}')">✕</button></div>`; }).join(""); return `<div style="margin-bottom:18px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>${rows||`<div class="empty-msg" style="margin-left:16px">No goals yet.</div>`}</div>`; }).join(""); return `<div class="section-head">Goals</div><div class="sub-text">No timeline. Add milestones in the Milestones tab.</div>${sections}<hr class="section-divider"/><div class="flex-col"><textarea id="new-goal-text" rows="2" placeholder="New goal..." onchange="state.newGoal.text=this.value">${state.newGoal.text}</textarea><select onchange="state.newGoal.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newGoal.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><button class="btn-primary" onclick="addGoal()">Add Goal</button></div>`; }
 function addGoal(){ const el=document.getElementById("new-goal-text"); const t=(el?el.value:state.newGoal.text).trim(); if(!t) return; state.goals.push({id:uid(),text:t,category:state.newGoal.category}); state.newGoal={text:"",category:"spiritual"}; persist("goals"); render(); }
 function deleteGoal(id){ state.goals=state.goals.filter(g=>g.id!==id); persist("goals"); render(); }
 
-// MILESTONES
-function renderMilestones(){ const total=state.milestones.length,done=state.milestones.filter(m=>m.done).length,pct=total>0?Math.round((done/total)*100):0; const circles=CATEGORIES.map(c=>{ const cm=state.milestones.filter(m=>m.category===c.id); if(!cm.length) return ""; const cd=cm.filter(m=>m.done).length; return `<div class="cat-circle" style="background:${c.light};border-color:${c.color};color:${c.color}">${cd}/${cm.length}</div>`; }).join(""); const sections=CATEGORIES.map(c=>{ const cm=state.milestones.filter(m=>m.category===c.id),cdone=cm.filter(m=>m.done).length; const rows=cm.map(m=>{ const g=state.goals.find(g=>g.id===m.goalId); return `<div class="milestone-card" style="background:${m.done?c.light:"#fafafa"};border-color:${m.done?c.color:"#eee"}"><button class="check-circle" style="background:${m.done?c.color:"#ddd"}" onclick="toggleMilestone('${m.id}')">${m.done?"✓":""}</button><div style="flex:1"><div style="font-size:13px;color:${m.done?"#888":"#222"};text-decoration:${m.done?"line-through":"none"};font-weight:${m.done?400:500}">${m.text}</div>${g?`<div class="linked-goal">→ ${g.text}</div>`:""}</div><button class="btn-ghost btn-danger" onclick="deleteMilestone('${m.id}')">✕</button></div>`; }).join(""); return `<div style="margin-bottom:22px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span><span class="goal-count">${cdone}/${cm.length}</span></div>${rows||`<div class="empty-msg">No milestones this month.</div>`}</div>`; }).join(""); const goalOptions=state.goals.filter(g=>g.category===state.newMilestone.category).map(g=>`<option value="${g.id}"${state.newMilestone.goalId===g.id?" selected":""}>${g.text}</option>`).join(""); return `<div class="progress-box"><div style="font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${currentMonth()}</div><div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} complete</div></div><div class="cat-circles">${circles}</div></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:#6B7FD7"></div></div></div>${sections}<hr class="section-divider"/><div class="section-head">Add Milestone</div><div class="flex-col"><textarea id="new-ms-text" rows="2" placeholder="This month I will..." onchange="state.newMilestone.text=this.value">${state.newMilestone.text}</textarea><select onchange="state.newMilestone.category=this.value;state.newMilestone.goalId='';render()">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newMilestone.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><select onchange="state.newMilestone.goalId=this.value"><option value="">Link to goal (optional)</option>${goalOptions}</select><button class="btn-primary" onclick="addMilestone()">Add Milestone</button></div>`; }
+function renderMilestones(){ const total=state.milestones.length,done=state.milestones.filter(m=>m.done).length,pct=total>0?Math.round((done/total)*100):0; const circles=CATEGORIES.map(c=>{ const cm=state.milestones.filter(m=>m.category===c.id); if(!cm.length) return ""; const cd=cm.filter(m=>m.done).length; return `<div class="cat-circle" style="background:${c.light};border-color:${c.color};color:${c.color}">${cd}/${cm.length}</div>`; }).join(""); const sections=CATEGORIES.map(c=>{ const cm=state.milestones.filter(m=>m.category===c.id),cdone=cm.filter(m=>m.done).length; const rows=cm.map(m=>{ const g=state.goals.find(g=>g.id===m.goalId); return `<div class="milestone-card" style="background:${m.done?c.light:"#fafafa"};border-color:${m.done?c.color:"#eee"}"><button class="check-circle" style="background:${m.done?c.color:"#ddd"}" onclick="toggleMilestone('${m.id}')">${m.done?"✓":""}</button><div style="flex:1"><div style="font-size:13px;color:${m.done?"#888":"#222"};text-decoration:${m.done?"line-through":"none"};font-weight:${m.done?400:500}">${m.text}</div>${g?`<div class="linked-goal">→ ${g.text}</div>`:""}</div><button class="btn-ghost btn-danger" onclick="deleteMilestone('${m.id}')">✕</button></div>`; }).join(""); return `<div style="margin-bottom:22px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span><span class="goal-count">${cdone}/${cm.length}</span></div>${rows||`<div class="empty-msg" style="margin-left:16px">No milestones this month.</div>`}</div>`; }).join(""); const goalOptions=state.goals.filter(g=>g.category===state.newMilestone.category).map(g=>`<option value="${g.id}"${state.newMilestone.goalId===g.id?" selected":""}>${g.text}</option>`).join(""); return `<div class="progress-box"><div style="font-size:10px;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px">${currentMonth()}</div><div style="display:flex;justify-content:space-between;align-items:flex-end"><div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} complete</div></div><div class="cat-circles">${circles}</div></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:#6B7FD7"></div></div></div>${sections}<hr class="section-divider"/><div class="section-head">Add Milestone</div><div class="flex-col"><textarea id="new-ms-text" rows="2" placeholder="This month I will..." onchange="state.newMilestone.text=this.value">${state.newMilestone.text}</textarea><select onchange="state.newMilestone.category=this.value;state.newMilestone.goalId='';render()">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newMilestone.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><select onchange="state.newMilestone.goalId=this.value"><option value="">Link to goal (optional)</option>${goalOptions}</select><button class="btn-primary" onclick="addMilestone()">Add Milestone</button></div>`; }
 function toggleMilestone(id){ state.milestones=state.milestones.map(m=>m.id===id?{...m,done:!m.done}:m); persist("milestones"); render(); }
 function deleteMilestone(id){ state.milestones=state.milestones.filter(m=>m.id!==id); persist("milestones"); render(); }
 function addMilestone(){ const el=document.getElementById("new-ms-text"); const t=(el?el.value:state.newMilestone.text).trim(); if(!t) return; state.milestones.push({id:uid(),text:t,category:state.newMilestone.category,goalId:state.newMilestone.goalId,done:false,month:currentMonth()}); state.newMilestone={text:"",category:"spiritual",goalId:""}; persist("milestones"); render(); }
 
-// LISTS
-function renderLists(){ const projects=[...new Set(state.lists.map(l=>l.project).filter(Boolean))]; const completedCount=state.lists.filter(l=>l.done).length; let body=""; if(state.listView==="category"){ body=CATEGORIES.map(c=>{ const items=state.lists.filter(l=>l.category===c.id); const rows=items.map(item=>`<div class="list-row" style="margin-left:16px"><button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button><span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>${item.project?`<span class="tag-pill">${item.project}</span>`:""}<button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button></div>`).join(""); return `<div style="margin-bottom:18px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>${rows||`<div class="empty-msg">Nothing here yet.</div>`}</div>`; }).join(""); } else { const ps=projects.map(proj=>{ const items=state.lists.filter(l=>l.project===proj); const rows=items.map(item=>{ const c=cat(item.category); return `<div class="list-row" style="border-left:3px solid ${c.color};padding-left:10px"><button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button><span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span><button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button></div>`; }).join(""); return `<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#444;margin-bottom:8px">${proj}</div>${rows}</div>`; }).join(""); const untagged=state.lists.filter(l=>!l.project); const ur=untagged.map(item=>`<div class="list-row"><button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button><span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span><button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button></div>`).join(""); body=ps+(untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${ur}</div>`:""); if(!body.trim()) body=`<div class="empty-msg" style="margin-bottom:20px">No tasks yet.</div>`; } const archiveDates=Object.keys(state.listArchive).sort().reverse().slice(0,5); const archiveSection=archiveDates.length?`<hr class="section-divider"/><div class="section-head">Archive</div><div class="sub-text">Completed tasks from previous days.</div>${archiveDates.map(d=>`<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>${state.listArchive[d].map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}</div>`).join("")}`:""; return `<div class="flex-row" style="margin-bottom:20px"><button class="pill-toggle" style="background:${state.listView==="category"?"#222":"#eee"};color:${state.listView==="category"?"#fff":"#555"}" onclick="state.listView='category';render()">By Category</button><button class="pill-toggle" style="background:${state.listView==="project"?"#222":"#eee"};color:${state.listView==="project"?"#fff":"#555"}" onclick="state.listView='project';render()">By Project</button></div>${body}${completedCount>0?`<button class="btn-primary full" style="background:#4BAF7C;margin-bottom:24px" onclick="archiveCompletedLists()">Archive ${completedCount} completed task${completedCount!==1?"s":""}</button>`:""}<hr class="section-divider"/><div class="section-head">Add to List</div><div class="flex-col"><textarea id="new-item-text" rows="2" placeholder="Task or note..." onchange="state.newItem.text=this.value">${state.newItem.text}</textarea><select onchange="state.newItem.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newItem.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><input id="new-item-project" placeholder="Project (optional)" value="${state.newItem.project}" onchange="state.newItem.project=this.value" /><button class="btn-primary" onclick="addList()">Add to List</button></div>${archiveSection}`; }
+// ---- LISTS ----
+function renderLists(){
+  const projectNames=[...new Set([...state.projects.map(p=>p.name),...state.lists.map(l=>l.project).filter(Boolean)])];
+  const completedCount=state.lists.filter(l=>l.done).length;
+  let body="";
+  if(state.listView==="category"){
+    body=CATEGORIES.map(c=>{ const items=state.lists.filter(l=>l.category===c.id);
+      const rows=items.map(item=>`<div class="list-row" style="margin-left:16px"><button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button><span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span>${item.project?`<span class="tag-pill">${item.project}</span>`:""}<button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button></div>`).join("");
+      return `<div style="margin-bottom:18px"><div class="cat-row"><div class="cat-dot" style="background:${c.color}"></div><span class="cat-label" style="color:${c.color}">${c.label}</span></div>${rows||`<div class="empty-msg" style="margin-left:16px">Nothing here yet.</div>`}</div>`;
+    }).join("");
+  } else {
+    const ps=projectNames.map(proj=>{ const items=state.lists.filter(l=>l.project===proj); if(!items.length) return ""; const p=state.projects.find(p=>p.name===proj); const g=p?state.goals.find(g=>g.id===p.goalId):null;
+      const rows=items.map(item=>{ const c=cat(item.category); return `<div class="list-row" style="border-left:3px solid ${c.color};padding-left:10px"><button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button><span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span><button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button></div>`; }).join("");
+      return `<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#444;margin-bottom:2px">${proj}</div>${g?`<div class="linked-goal" style="margin-bottom:8px">→ ${g.text}</div>`:'<div style="margin-bottom:8px"></div>'}${rows}</div>`;
+    }).join("");
+    const untagged=state.lists.filter(l=>!l.project);
+    const ur=untagged.map(item=>`<div class="list-row"><button style="font-size:16px;color:${item.done?"#4BAF7C":"#ccc"};background:none;border:none;cursor:pointer;padding:0" onclick="toggleList('${item.id}')">${item.done?"✓":"○"}</button><span style="flex:1;font-size:13px;color:${item.done?"#bbb":"#333"};text-decoration:${item.done?"line-through":"none"}">${item.text}</span><button class="btn-ghost btn-danger" onclick="deleteList('${item.id}')">✕</button></div>`).join("");
+    body=ps+(untagged.length?`<div style="margin-bottom:18px"><div style="font-weight:600;font-size:13px;color:#aaa;margin-bottom:8px">No Project</div>${ur}</div>`:"");
+    if(!body.trim()) body=`<div class="empty-msg" style="margin-bottom:20px">No tasks yet.</div>`;
+  }
+  const archiveDates=Object.keys(state.listArchive).sort().reverse().slice(0,5);
+  const archiveSection=archiveDates.length?`<hr class="section-divider"/><div class="section-head">Archive</div><div class="sub-text">Completed tasks from previous days.</div>${archiveDates.map(d=>`<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:600;color:#aaa;margin-bottom:6px">${d}</div>${state.listArchive[d].map(item=>`<div class="archive-item"><span style="font-size:13px;color:#bbb;text-decoration:line-through">${item.text}</span>${item.project?` <span class="tag-pill">${item.project}</span>`:""}</div>`).join("")}</div>`).join("")}`:"";
+  const projectOptions=state.projects.map(p=>`<option value="${p.name}"${state.newItem.project===p.name?" selected":""}>${p.name}</option>`).join("");
+  return `<div style="display:flex;gap:8px;margin-bottom:20px;align-items:center"><button class="pill-toggle" style="background:${state.listView==="category"?"#222":"#eee"};color:${state.listView==="category"?"#fff":"#555"}" onclick="state.listView='category';render()">By Category</button><button class="pill-toggle" style="background:${state.listView==="project"?"#222":"#eee"};color:${state.listView==="project"?"#fff":"#555"}" onclick="state.listView='project';render()">By Project</button><button class="btn-ghost" style="margin-left:auto;font-size:12px;color:#6B7FD7" onclick="state.showProjectManager=true;render()">Manage Projects</button></div>${body}${completedCount>0?`<button class="btn-primary full" style="background:#4BAF7C;margin-bottom:24px" onclick="archiveCompletedLists()">Archive ${completedCount} completed task${completedCount!==1?"s":""}</button>`:""}<hr class="section-divider"/><div class="section-head">Add to List</div><div class="flex-col"><textarea id="new-item-text" rows="2" placeholder="Task or note..." onchange="state.newItem.text=this.value">${state.newItem.text}</textarea><select onchange="state.newItem.category=this.value">${CATEGORIES.map(c=>`<option value="${c.id}"${state.newItem.category===c.id?" selected":""}>${c.label}</option>`).join("")}</select><select onchange="state.newItem.project=this.value"><option value="">No project</option>${projectOptions}</select><button class="btn-primary" onclick="addList()">Add to List</button></div>${archiveSection}`;
+}
+
+function archiveCompletedLists(){ const done=state.lists.filter(l=>l.done); if(!done.length){ alert("No completed tasks to archive."); return; } const dk=todayStr(); if(!state.listArchive[dk]) state.listArchive[dk]=[]; state.listArchive[dk].push(...done); state.lists=state.lists.filter(l=>!l.done); persist("lists"); persist("listArchive"); render(); }
 function toggleList(id){ state.lists=state.lists.map(l=>l.id===id?{...l,done:!l.done}:l); persist("lists"); render(); }
 function deleteList(id){ state.lists=state.lists.filter(l=>l.id!==id); persist("lists"); render(); }
-function addList(){ const el=document.getElementById("new-item-text"); const elp=document.getElementById("new-item-project"); const t=(el?el.value:state.newItem.text).trim(); const p=(elp?elp.value:state.newItem.project).trim(); if(!t) return; state.lists.push({id:uid(),text:t,category:state.newItem.category,project:p,done:false,date:todayStr()}); state.newItem={text:"",category:"spiritual",project:""}; persist("lists"); render(); }
+function addList(){ const el=document.getElementById("new-item-text"); const t=(el?el.value:state.newItem.text).trim(); if(!t) return; state.lists.push({id:uid(),text:t,category:state.newItem.category,project:state.newItem.project,done:false,date:todayStr()}); state.newItem={text:"",category:"spiritual",project:""}; persist("lists"); render(); }
 
-// CHECK-IN
-function renderCheckin(){ const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start)); const total=sorted.length,done=state.todayCompleted.length,pct=total>0?Math.round((done/total)*100):0; const catBars=CATEGORIES.map(c=>{ const cb=sorted.filter(b=>b.category===c.id); const cd=cb.filter(b=>state.todayCompleted.includes(b.id)).length; if(!cb.length) return ""; const cp=Math.round((cd/cb.length)*100); return `<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:${c.color};font-weight:600">${c.label}</span><span style="color:#aaa">${cd}/${cb.length}</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${cp}%;background:${c.color}"></div></div></div>`; }).join(""); const brickRows=sorted.map(brick=>{ const c=cat(brick.category); const isDone=state.todayCompleted.includes(brick.id); const mins=timeToMins(brick.end)-timeToMins(brick.start); return `<div class="checkin-brick" style="background:${isDone?c.light:"#fafafa"};border-color:${isDone?c.color:"#eee"}" onclick="toggleCheckin('${brick.id}')"><div class="checkin-box" style="background:${isDone?c.color:"#ddd"}">${isDone?"✓":""}</div><span style="font-size:13px;color:${isDone?"#222":"#888"};font-weight:${isDone?600:400};flex:1">${brick.label}</span><span style="font-size:11px;color:#bbb">${brick.start} · ${mins}m</span></div>`; }).join(""); const listRows=state.lists.map(item=>{ const c=cat(item.category); const isChecked=state.todayListsDone.includes(item.id)||item.done; return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:${isChecked?c.light:"#fafafa"};border:1px solid ${isChecked?c.color:"#eee"};margin-bottom:6px;cursor:pointer" onclick="toggleListCheckin('${item.id}')"><div style="width:20px;height:20px;border-radius:4px;background:${isChecked?c.color:"#ddd"};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff">${isChecked?"✓":""}</div><span style="flex:1;font-size:13px;color:${isChecked?"#888":"#333"};text-decoration:${isChecked?"line-through":"none"}">${item.text}</span>${item.project?`<span class="tag-pill">${item.project}</span>`:""}<div style="width:8px;height:8px;border-radius:2px;background:${c.color};flex-shrink:0"></div></div>`; }).join(""); const saturday=isSaturday(); const weeklySection=saturday?`<hr class="divider"/><div class="section-head">Saturday Weekly Review</div><div class="sub-text">Review the week. Adjust bricks. Sunday is rest.</div><label>Wins this week</label><textarea rows="3" onchange="state.weeklyWins=this.value" placeholder="What worked? What moved?">${state.weeklyWins}</textarea><label>Challenges</label><textarea rows="3" onchange="state.weeklyChallenges=this.value" placeholder="What got in the way?">${state.weeklyChallenges}</textarea><label>Adjustments for next week</label><textarea rows="3" onchange="state.weeklyAdjustments=this.value" placeholder="What bricks need to move?">${state.weeklyAdjustments}</textarea><button class="btn-primary full" style="background:#8B5DB8;margin-top:12px" onclick="saveWeekly();this.textContent='Saved ✓'">Save Weekly Review</button>`:""; return `<div class="progress-box"><div style="font-size:13px;color:#888;margin-bottom:8px">Today's completion</div><div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:12px"><div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} bricks</div></div><div style="flex:1">${catBars}</div></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:#6B7FD7"></div></div></div><div class="section-head">Bricks — what got done?</div>${brickRows}<hr class="section-divider"/><div class="section-head">Lists — what moved today?</div><div class="sub-text">Tap what you completed. Archive when done.</div>${listRows||'<div class="empty-msg">No active tasks.</div>'}${state.lists.some(l=>l.done||state.todayListsDone.includes(l.id))?`<button class="btn-primary full" style="background:#4BAF7C;margin-top:8px;margin-bottom:4px" onclick="archiveCheckinCompleted()">Archive completed tasks</button>`:""}<label style="margin-top:20px">End of day note</label><textarea rows="4" onchange="state.todayNote=this.value" placeholder="How did today go? What needs to move tomorrow?">${state.todayNote}</textarea><button class="btn-primary full" style="margin-top:12px" onclick="saveCheckin();this.textContent='Saved ✓'">Save Check-In</button>${weeklySection}`; }
+// ---- CHECK-IN ----
+function renderCheckin(){ const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start)); const total=sorted.length,done=state.todayCompleted.length,pct=total>0?Math.round((done/total)*100):0; const catBars=CATEGORIES.map(c=>{ const cb=sorted.filter(b=>b.category===c.id); const cd=cb.filter(b=>state.todayCompleted.includes(b.id)).length; if(!cb.length) return ""; const cp=Math.round((cd/cb.length)*100); return `<div style="margin-bottom:6px"><div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px"><span style="color:${c.color};font-weight:600">${c.label}</span><span style="color:#aaa">${cd}/${cb.length}</span></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${cp}%;background:${c.color}"></div></div></div>`; }).join(""); const brickRows=sorted.map(brick=>{ const c=cat(brick.category); const isDone=state.todayCompleted.includes(brick.id); const mins=timeToMins(brick.end)-timeToMins(brick.start); return `<div class="checkin-brick" style="background:${isDone?c.light:"#fafafa"};border-color:${isDone?c.color:"#eee"}" onclick="toggleCheckin('${brick.id}')"><div class="checkin-box" style="background:${isDone?c.color:"#ddd"}">${isDone?"✓":""}</div><span style="font-size:13px;color:${isDone?"#222":"#888"};font-weight:${isDone?600:400};flex:1">${brick.label}</span><span style="font-size:11px;color:#bbb">${brick.start} · ${mins}m</span></div>`; }).join(""); const listRows=state.lists.map(item=>{ const c=cat(item.category); const isChecked=state.todayListsDone.includes(item.id)||item.done; return `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:${isChecked?c.light:"#fafafa"};border:1px solid ${isChecked?c.color:"#eee"};margin-bottom:6px;cursor:pointer" onclick="toggleListCheckin('${item.id}')"><div style="width:20px;height:20px;border-radius:4px;background:${isChecked?c.color:"#ddd"};display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;color:#fff">${isChecked?"✓":""}</div><span style="flex:1;font-size:13px;color:${isChecked?"#888":"#333"};text-decoration:${isChecked?"line-through":"none"}">${item.text}</span>${item.project?`<span class="tag-pill">${item.project}</span>`:""}<div style="width:8px;height:8px;border-radius:2px;background:${c.color};flex-shrink:0"></div></div>`; }).join(""); const saturday=isSaturday(); const weeklySection=saturday?`<hr class="divider"/><div class="section-head">Saturday Weekly Review</div><div class="sub-text">Review the week. Adjust bricks. Sunday is rest.</div><label>Wins this week</label><textarea rows="3" onchange="state.weeklyWins=this.value" placeholder="What worked? What moved?">${state.weeklyWins}</textarea><label>Challenges</label><textarea rows="3" onchange="state.weeklyChallenges=this.value" placeholder="What got in the way?">${state.weeklyChallenges}</textarea><label>Adjustments for next week</label><textarea rows="3" onchange="state.weeklyAdjustments=this.value" placeholder="What bricks need to move?">${state.weeklyAdjustments}</textarea><button class="btn-primary full" style="background:#8B5DB8;margin-top:12px" onclick="saveWeekly();this.textContent='Saved ✓'">Save Weekly Review</button>`:""; return `<div class="progress-box"><div style="font-size:13px;color:#888;margin-bottom:8px">Today's completion</div><div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:12px"><div><div class="progress-pct">${pct}%</div><div class="progress-sub">${done} of ${total} bricks</div></div><div style="flex:1">${catBars}</div></div><div class="progress-bar-bg"><div class="progress-bar-fill" style="width:${pct}%;background:#6B7FD7"></div></div></div><div class="section-head">Bricks — what got done?</div>${brickRows}<hr class="section-divider"/><div class="section-head">Lists — what moved today?</div><div class="sub-text">Tap what you completed. Archive when done.</div>${listRows||'<div class="empty-msg">No active tasks.</div>'}${state.lists.some(l=>l.done||state.todayListsDone.includes(l.id))?`<button class="btn-primary full" style="background:#4BAF7C;margin-top:8px;margin-bottom:4px" onclick="archiveCheckinCompleted()">Archive completed tasks</button>`:""}<label style="margin-top:20px">End of day note</label><textarea rows="4" onchange="state.todayNote=this.value" placeholder="How did today go? What needs to move tomorrow?">${state.todayNote}</textarea><button class="btn-primary full" style="margin-top:12px" onclick="saveCheckin();renderCheckinProjectSummary();this.textContent='Saved ✓'">Save Check-In</button><div id="checkin-project-summary"></div>${weeklySection}`; }
+
+function renderCheckinProjectSummary(){
+  const el=document.getElementById("checkin-project-summary");
+  if(!el) return;
+  const dk=todayStr();
+  const todayLog=(state.projectHours&&state.projectHours[dk])||{};
+  const entries=Object.keys(todayLog);
+  if(!entries.length){ el.innerHTML=""; return; }
+  el.innerHTML=`<div style="margin-top:14px;padding:12px 14px;background:#f5f5f5;border-radius:10px"><div style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Logged today</div>${entries.map(p=>`<div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="color:#333;font-weight:600">${p}</span><span style="color:#888">${fmtHours(todayLog[p])}</span></div>`).join("")}</div>`;
+}
 function toggleCheckin(id){ if(state.todayCompleted.includes(id)) state.todayCompleted=state.todayCompleted.filter(i=>i!==id); else state.todayCompleted.push(id); render(); }
 function toggleListCheckin(id){ if(state.todayListsDone.includes(id)){ state.todayListsDone=state.todayListsDone.filter(i=>i!==id); state.lists=state.lists.map(l=>l.id===id?{...l,done:false}:l); } else { state.todayListsDone.push(id); state.lists=state.lists.map(l=>l.id===id?{...l,done:true}:l); } persist("lists"); render(); }
 function archiveCheckinCompleted(){ const done=state.lists.filter(l=>l.done); if(!done.length) return; const dk=todayStr(); if(!state.listArchive[dk]) state.listArchive[dk]=[]; state.listArchive[dk].push(...done); state.lists=state.lists.filter(l=>!l.done); state.todayListsDone=state.todayListsDone.filter(id=>state.lists.find(l=>l.id===id)); persist("lists"); persist("listArchive"); render(); }
