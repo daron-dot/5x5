@@ -470,7 +470,7 @@ function dragTouchEnd(e){
   const under=document.elementFromPoint(touch.clientX,touch.clientY);
   const target=under?under.closest(".tetris-brick[data-brick-id]"):null;
   if(target&&target.dataset.brickId!==drag.brickId){
-    swapBrickTimes(drag.brickId,target.dataset.brickId);
+    settleBrickAt(drag.brickId,target.dataset.brickId);
   }
   dragCancel();
 }
@@ -499,7 +499,7 @@ function dragMouseDown(e){
       document.removeEventListener("mouseup",onUp);
       const under=document.elementFromPoint(ev.clientX,ev.clientY);
       const target=under?under.closest(".tetris-brick[data-brick-id]"):null;
-      if(target&&target.dataset.brickId!==drag.brickId) swapBrickTimes(drag.brickId,target.dataset.brickId);
+      if(target&&target.dataset.brickId!==drag.brickId) settleBrickAt(drag.brickId,target.dataset.brickId);
       dragCancel();
     };
     document.addEventListener("mousemove",onMove);
@@ -508,13 +508,39 @@ function dragMouseDown(e){
   el.addEventListener("mouseup",()=>clearTimeout(drag.longPressTimer),{once:true});
 }
 
-function swapBrickTimes(idA,idB){
-  const a=state.todayBricks.find(b=>b.id===idA);
-  const b=state.todayBricks.find(b=>b.id===idB);
-  if(!a||!b) return;
-  const t1=a.start,e1=a.end;
-  a.start=b.start; a.end=b.end;
-  b.start=t1; b.end=e1;
+function settleBrickAt(movedId,targetId){
+  const sorted=[...state.todayBricks].sort((a,b)=>timeToMins(a.start)-timeToMins(b.start));
+  const movedIdx=sorted.findIndex(b=>b.id===movedId);
+  const targetIdx=sorted.findIndex(b=>b.id===targetId);
+  if(movedIdx===-1||targetIdx===-1) return;
+
+  const moved=sorted[movedIdx];
+  const duration=timeToMins(moved.end)-timeToMins(moved.start);
+
+  // Remove moved brick from the list
+  const rest=sorted.filter(b=>b.id!==movedId);
+  // Find new insertion index (position of target within rest)
+  let insertIdx=rest.findIndex(b=>b.id===targetId);
+  // If moving downward (later), insert AFTER target; if upward (earlier), insert BEFORE target
+  const movingDown=movedIdx<targetIdx;
+  if(movingDown) insertIdx=insertIdx+1;
+
+  rest.splice(insertIdx,0,{...moved});
+
+  // Now re-time everything sequentially starting from the earliest original start time,
+  // preserving each brick's own duration, so the day just compresses/ripples around the move.
+  const dayStart=timeToMins(sorted[0].start);
+  let cursor=dayStart;
+  const minsToTime=m=>{ m=((m%1440)+1440)%1440; return `${String(Math.floor(m/60)).padStart(2,"0")}:${String(m%60).padStart(2,"0")}`; };
+
+  const retimed=rest.map(b=>{
+    const dur=timeToMins(b.end)-timeToMins(b.start);
+    const newBrick={...b,start:minsToTime(cursor),end:minsToTime(cursor+dur)};
+    cursor+=dur;
+    return newBrick;
+  });
+
+  state.todayBricks=retimed;
   persist("todayBricks");
   render();
 }
@@ -537,7 +563,7 @@ function render(){
   else if(state.activeTab==="Milestones") c.innerHTML=renderMilestones();
   else if(state.activeTab==="Lists") c.innerHTML=renderLists();
   else if(state.activeTab==="Check-In") c.innerHTML=renderCheckin();
-  if(state.activeTab==="Bricks"&&state.brickView==="tetris") attachDragHandlers();
+  if(state.activeTab==="Bricks") attachDragHandlers();
 }
 
 function setTab(t){ state.activeTab=t; render(); }
@@ -557,7 +583,7 @@ function buildStacks(bricks){
 function renderTetris(){
   const stacks=buildStacks(state.todayBricks);
   if(!stacks.length) return `<div class="empty-msg">No bricks yet. Add some.</div>`;
-  return `<div class="drag-hint">Long press any brick to drag and swap positions. Tap ✎ to edit times.</div>`+
+  return `<div class="drag-hint">Long press any brick to drag it into a new spot — the day settles around it. Tap a brick to edit it.</div>`+
     stacks.map(stack=>{
       const c=cat(stack[0].category);
       const isActive=timer.brickId&&stack.some(b=>b.id===timer.brickId);
@@ -679,13 +705,11 @@ function renderBricks(){
     </div>
   </div>`;
   const viewToggle=`<div style="display:flex;gap:8px;margin-bottom:16px;align-items:center">
-    <button class="pill-toggle" style="background:${state.brickView==="tetris"?"#222":"#eee"};color:${state.brickView==="tetris"?"#fff":"#555"}" onclick="state.brickView='tetris';persist('brickView');render()">Blocks</button>
-    <button class="pill-toggle" style="background:${state.brickView==="timeline"?"#222":"#eee"};color:${state.brickView==="timeline"?"#fff":"#555"}" onclick="state.brickView='timeline';persist('brickView');render()">Timeline</button>
     <button class="btn-primary btn-small" style="margin-left:auto" onclick="state.showAddBrick=true;render()">+ Add</button>
   </div>`;
   const dateBar=`<div style="font-size:12px;color:#aaa;margin-bottom:12px">${new Date().toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"})}</div>`;
   const legend=CATEGORIES.map(c=>`<div style="display:flex;align-items:center;gap:4px;font-size:11px"><div style="width:8px;height:8px;border-radius:2px;background:${c.color}"></div><span style="color:#666">${c.label}</span></div>`).join("");
-  const main=state.brickView==="tetris"?renderTetris():renderTimeline();
+  const main=renderTetris();
   const shiftBar=`<div style="display:flex;align-items:center;gap:6px;margin-bottom:14px">
     <span style="font-size:11px;color:#aaa;text-transform:uppercase;letter-spacing:1px;margin-right:2px">Shift day</span>
     <button class="btn-ghost" style="border:1px solid #ddd;border-radius:6px;font-size:12px;padding:5px 10px" onclick="shiftSchedule(-60)">−1h</button>
